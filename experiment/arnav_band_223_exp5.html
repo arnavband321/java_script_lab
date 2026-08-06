@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart Total Calculator</title>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            width: 800px;
+            background: white;
+            padding: 28px;
+            border: 1px solid #ddd;
+            border-radius: 14px;
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        h2 i {
+            margin-right: 6px;
+        }
+
+        /* ─── Add-Item Form ─── */
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .form-row input,
+        .form-row select {
+            padding: 11px 13px;
+            font-size: 15px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            outline: none;
+        }
+
+        .form-row input:focus,
+        .form-row select:focus {
+            border-color: #222;
+        }
+
+        #item-name {
+            flex: 2;
+            min-width: 140px;
+        }
+
+        #item-price {
+            flex: 1;
+            min-width: 100px;
+        }
+
+        #item-qty {
+            width: 70px;
+        }
+
+        #item-category {
+            flex: 1;
+            min-width: 120px;
+            cursor: pointer;
+        }
+
+        /* ─── Buttons ─── */
+
+        button {
+            background: #111;
+            color: white;
+            border: none;
+            padding: 11px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: .3s;
+            white-space: nowrap;
+        }
+
+        button:hover {
+            background: #333;
+        }
+
+        /* ─── Discount Row ─── */
+
+        .discount-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .discount-row input {
+            flex: 1;
+            padding: 11px 13px;
+            font-size: 15px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            outline: none;
+        }
+
+        .discount-row input:focus {
+            border-color: #222;
+        }
+
+        #apply-discount-btn {
+            background: #7c3aed;
+        }
+
+        #apply-discount-btn:hover {
+            background: #6d28d9;
+        }
+
+        .discount-msg {
+            font-size: 14px;
+            min-height: 20px;
+            margin-bottom: 14px;
+            padding-left: 2px;
+        }
+
+        .discount-msg.success {
+            color: #16a34a;
+        }
+
+        .discount-msg.error {
+            color: #ef4444;
+        }
+
+        /* ─── Table ─── */
+
+        .table-wrap {
+            margin-bottom: 18px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            text-align: left;
+            padding: 10px 12px;
+            font-size: 14px;
+            color: #555;
+            border-bottom: 2px solid #e5e5e5;
+        }
+
+        tbody td {
+            padding: 10px 12px;
+            font-size: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        tbody tr:hover {
+            background: #fafafa;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .3px;
+        }
+
+        .badge-electronics {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .badge-clothing {
+            background: #fce7f3;
+            color: #be185d;
+        }
+
+        .badge-grocery {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .badge-general {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .delete-btn {
+            background: none;
+            color: #ef4444;
+            padding: 6px 10px;
+            font-size: 16px;
+        }
+
+        .delete-btn:hover {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .empty-msg {
+            text-align: center;
+            color: #999;
+            padding: 32px 0;
+            font-size: 16px;
+        }
+
+        .empty-msg i {
+            margin-right: 6px;
+        }
+
+        /* ─── Summary ─── */
+
+        .summary {
+            background: #fafafa;
+            border: 1px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 18px;
+        }
+
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            padding: 7px 0;
+            font-size: 15px;
+            color: #444;
+        }
+
+        .discount-line {
+            color: #16a34a;
+        }
+
+        .total-line {
+            border-top: 2px solid #e5e5e5;
+            margin-top: 6px;
+            padding-top: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #111;
+        }
+
+        /* ─── Filter Section ─── */
+
+        .filter-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+
+        .filter-label {
+            font-size: 14px;
+            color: #555;
+            margin-right: 4px;
+        }
+
+        .filter-btn {
+            background: #f3f4f6;
+            color: #333;
+            padding: 7px 14px;
+            font-size: 13px;
+            border-radius: 8px;
+        }
+
+        .filter-btn:hover {
+            background: #e5e7eb;
+        }
+
+        .filter-btn.active {
+            background: #111;
+            color: white;
+        }
+
+        /* ─── Highlight Box ─── */
+
+        .highlight {
+            background: #fffbeb;
+            border: 1px solid #fbbf24;
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-size: 15px;
+            color: #92400e;
+        }
+
+        .highlight i {
+            margin-right: 6px;
+            color: #f59e0b;
+        }
+
+        /* ─── Utility ─── */
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2><i class="fa-solid fa-cart-shopping"></i> Cart Total Calculator</h2>
+
+        <!-- Add Item Form -->
+        <div class="form-row">
+            <input type="text" id="item-name" placeholder="Item name">
+            <input type="number" id="item-price" placeholder="Price (₹)" min="0" step="0.01">
+            <input type="number" id="item-qty" placeholder="Qty" min="1" value="1">
+            <select id="item-category">
+                <option value="general">General</option>
+                <option value="electronics">Electronics</option>
+                <option value="clothing">Clothing</option>
+                <option value="grocery">Grocery</option>
+            </select>
+            <button onclick="addItem()" id="add-btn">
+                <i class="fa-solid fa-plus"></i> Add
+            </button>
+        </div>
+
+        <!-- Discount Code -->
+        <div class="discount-row">
+            <input type="text" id="discount-code" placeholder="Discount code (e.g. SAVE10, FLAT50, ELEC20)">
+            <button onclick="applyDiscount()" id="apply-discount-btn">
+                <i class="fa-solid fa-tag"></i> Apply
+            </button>
+        </div>
+
+        <div id="discount-msg" class="discount-msg"></div>
+
+        <!-- Cart Table -->
+        <div class="table-wrap">
+            <table id="cart-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Item</th>
+                        <th>Category</th>
+                        <th>Price (₹)</th>
+                        <th>Qty</th>
+                        <th>Subtotal (₹)</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="cart-body">
+                    <!-- Rows rendered by JS -->
+                </tbody>
+            </table>
+
+            <p id="empty-msg" class="empty-msg">
+                <i class="fa-solid fa-basket-shopping"></i> Your cart is empty. Add items above.
+            </p>
+        </div>
+
+        <!-- Summary -->
+        <div id="summary" class="summary hidden">
+            <div class="summary-line">
+                <span>Items in cart</span>
+                <span id="total-items">0</span>
+            </div>
+            <div class="summary-line">
+                <span>Total quantity</span>
+                <span id="total-qty">0</span>
+            </div>
+            <div class="summary-line">
+                <span>Subtotal</span>
+                <span id="subtotal">₹0.00</span>
+            </div>
+            <div class="summary-line discount-line hidden" id="discount-summary">
+                <span id="discount-label">Discount</span>
+                <span id="discount-amount">−₹0.00</span>
+            </div>
+            <div class="summary-line total-line">
+                <span>Grand Total</span>
+                <span id="grand-total">₹0.00</span>
+            </div>
+        </div>
+
+        <!-- Filter Buttons -->
+        <div id="filter-section" class="filter-section hidden">
+            <span class="filter-label">Filter by category:</span>
+            <button class="filter-btn active" onclick="filterByCategory('all')">All</button>
+            <button class="filter-btn" onclick="filterByCategory('electronics')">Electronics</button>
+            <button class="filter-btn" onclick="filterByCategory('clothing')">Clothing</button>
+            <button class="filter-btn" onclick="filterByCategory('grocery')">Grocery</button>
+            <button class="filter-btn" onclick="filterByCategory('general')">General</button>
+        </div>
+
+        <!-- Most Expensive Item -->
+        <div id="highlight" class="highlight hidden"></div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  Experiment 05 – Cart Total Calculator with Discount Logic
+        //  Demonstrates: Array methods (map, filter, reduce, find,
+        //                forEach, findIndex) and Object handling
+        // ============================================================
+
+        // ─── Cart state (array of item objects) ───
+
+        let cart = [];
+        let nextId = 1;
+
+        // Active discount object (null when none applied)
+        let activeDiscount = null;
+
+        // Current category filter
+        let activeFilter = "all";
+
+        // ─── Discount code definitions (array of objects) ───
+
+        const discountCodes = [
+            {
+                code: "SAVE10",
+                type: "percent",
+                value: 10,
+                label: "10% off entire cart",
+            },
+            {
+                code: "FLAT50",
+                type: "flat",
+                value: 50,
+                label: "₹50 flat off",
+            },
+            {
+                code: "ELEC20",
+                type: "category-percent",
+                value: 20,
+                category: "electronics",
+                label: "20% off Electronics items",
+            },
+        ];
+
+        // ──────────────────────────────────────────────────────────
+        //  Add Item  (Object creation + Array.push)
+        // ──────────────────────────────────────────────────────────
+
+        function addItem() {
+
+            try {
+
+                const name = document.getElementById("item-name").value.trim();
+                const price = parseFloat(document.getElementById("item-price").value);
+                const qty = parseInt(document.getElementById("item-qty").value, 10);
+                const category = document.getElementById("item-category").value;
+
+                if (!name) throw "Please enter an item name.";
+                if (isNaN(price) || price <= 0) throw "Please enter a valid price.";
+                if (isNaN(qty) || qty < 1) throw "Quantity must be at least 1.";
+
+                // Create an item object
+                const item = {
+                    id: nextId++,
+                    name: name,
+                    price: price,
+                    qty: qty,
+                    category: category,
+                };
+
+                // Array.push – add item to cart
+                cart.push(item);
+
+                // Clear inputs
+                document.getElementById("item-name").value = "";
+                document.getElementById("item-price").value = "";
+                document.getElementById("item-qty").value = 1;
+
+                renderCart();
+
+            } catch (error) {
+                alert(error);
+            }
+        }
+
+        // ──────────────────────────────────────────────────────────
+        //  Remove Item  (Array.findIndex + Array.splice)
+        // ──────────────────────────────────────────────────────────
+
+        function removeItem(id) {
+
+            // Array.findIndex – locate item by id
+            const index = cart.findIndex(function (item) {
+                return item.id === id;
+            });
+
+            if (index !== -1) {
+                // Array.splice – remove one element at index
+                cart.splice(index, 1);
+                renderCart();
+            }
+        }
+
+        // ──────────────────────────────────────────────────────────
+        //  Apply Discount  (Array.find on discountCodes)
+        // ──────────────────────────────────────────────────────────
+
+        function applyDiscount() {
+
+            const input = document.getElementById("discount-code").value.trim().toUpperCase();
+            const msgEl = document.getElementById("discount-msg");
+
+            if (!input) {
+                msgEl.className = "discount-msg error";
+                msgEl.textContent = "Please enter a discount code.";
+                return;
+            }
+
+            // Array.find – search for matching code object
+            const found = discountCodes.find(function (d) {
+                return d.code === input;
+            });
+
+            if (!found) {
+                activeDiscount = null;
+                msgEl.className = "discount-msg error";
+                msgEl.textContent = 'Invalid code "' + input + '". Try SAVE10, FLAT50, or ELEC20.';
+            } else {
+                activeDiscount = found;
+                msgEl.className = "discount-msg success";
+                msgEl.textContent = 'Code "' + found.code + '" applied — ' + found.label + "!";
+            }
+
+            renderCart();
+        }
+
+        // ──────────────────────────────────────────────────────────
+        //  Calculate Discount  (Array.filter + Array.reduce)
+        // ──────────────────────────────────────────────────────────
+
+        function calculateDiscount(subtotal) {
+
+            if (!activeDiscount) return 0;
+
+            if (activeDiscount.type === "percent") {
+                // Percentage off entire subtotal
+                return subtotal * (activeDiscount.value / 100);
+            }
+
+            if (activeDiscount.type === "flat") {
+                // Flat amount off (cannot exceed subtotal)
+                return Math.min(activeDiscount.value, subtotal);
+            }
+
+            if (activeDiscount.type === "category-percent") {
+
+                // Array.filter – pick items matching the discount category
+                const eligible = cart.filter(function (item) {
+                    return item.category === activeDiscount.category;
+                });
+
+                // Array.reduce – sum subtotals of eligible items
+                const eligibleTotal = eligible.reduce(function (sum, item) {
+                    return sum + item.price * item.qty;
+                }, 0);
+
+                return eligibleTotal * (activeDiscount.value / 100);
+            }
+
+            return 0;
+        }
+
+        // ──────────────────────────────────────────────────────────
+        //  Filter by Category  (Array.filter)
+        // ──────────────────────────────────────────────────────────
+
+        function filterByCategory(category) {
+
+            activeFilter = category;
+
+            // Update active button
+            var btns = document.querySelectorAll(".filter-btn");
+            btns.forEach(function (btn) {
+                btn.classList.remove("active");
+            });
+
+            // Find the clicked button using event-less approach
+            var allBtns = document.querySelectorAll(".filter-btn");
+            allBtns.forEach(function (btn) {
+                if (btn.textContent.trim().toLowerCase() === category) {
+                    btn.classList.add("active");
+                }
+            });
+
+            renderCart();
+        }
+
+        // ──────────────────────────────────────────────────────────
+        //  Render Cart  (Array.forEach, Array.map, Array.filter,
+        //                Array.reduce, Object destructuring-style
+        //                property access)
+        // ──────────────────────────────────────────────────────────
+
+        function renderCart() {
+
+            var tbody = document.getElementById("cart-body");
+            var emptyMsg = document.getElementById("empty-msg");
+            var summaryEl = document.getElementById("summary");
+            var filterSection = document.getElementById("filter-section");
+            var highlightEl = document.getElementById("highlight");
+            var table = document.getElementById("cart-table");
+
+            // Decide which items to show (Array.filter)
+            var displayItems;
+            if (activeFilter === "all") {
+                displayItems = cart;
+            } else {
+                displayItems = cart.filter(function (item) {
+                    return item.category === activeFilter;
+                });
+            }
+
+            // Empty state
+            if (cart.length === 0) {
+                table.classList.add("hidden");
+                emptyMsg.classList.remove("hidden");
+                summaryEl.classList.add("hidden");
+                filterSection.classList.add("hidden");
+                highlightEl.classList.add("hidden");
+                return;
+            }
+
+            table.classList.remove("hidden");
+            emptyMsg.classList.add("hidden");
+            summaryEl.classList.remove("hidden");
+            filterSection.classList.remove("hidden");
+
+            // ── Build table rows (Array.map to create HTML strings) ──
+
+            var rowsHtml = displayItems.map(function (item, index) {
+
+                var subtotal = item.price * item.qty;
+
+                return (
+                    "<tr>" +
+                    "<td>" + (index + 1) + "</td>" +
+                    "<td>" + escapeHtml(item.name) + "</td>" +
+                    '<td><span class="category-badge badge-' + item.category + '">' +
+                        item.category +
+                    "</span></td>" +
+                    "<td>" + item.price.toFixed(2) + "</td>" +
+                    "<td>" + item.qty + "</td>" +
+                    "<td>" + subtotal.toFixed(2) + "</td>" +
+                    '<td><button class="delete-btn" onclick="removeItem(' + item.id + ')">' +
+                        '<i class="fa-solid fa-trash"></i></button></td>' +
+                    "</tr>"
+                );
+
+            }).join("");
+
+            tbody.innerHTML = rowsHtml;
+
+            // ── Summary calculations ──
+
+            // Array.reduce – total subtotal of ALL cart items
+            var subtotal = cart.reduce(function (sum, item) {
+                return sum + item.price * item.qty;
+            }, 0);
+
+            // Array.reduce – total quantity
+            var totalQty = cart.reduce(function (sum, item) {
+                return sum + item.qty;
+            }, 0);
+
+            var discountAmt = calculateDiscount(subtotal);
+            var grandTotal = subtotal - discountAmt;
+
+            document.getElementById("total-items").textContent = cart.length;
+            document.getElementById("total-qty").textContent = totalQty;
+            document.getElementById("subtotal").textContent = "₹" + subtotal.toFixed(2);
+            document.getElementById("grand-total").textContent = "₹" + grandTotal.toFixed(2);
+
+            // Show / hide discount line
+            var discountSummary = document.getElementById("discount-summary");
+            if (discountAmt > 0) {
+                discountSummary.classList.remove("hidden");
+                document.getElementById("discount-label").textContent =
+                    "Discount (" + activeDiscount.label + ")";
+                document.getElementById("discount-amount").textContent =
+                    "−₹" + discountAmt.toFixed(2);
+            } else {
+                discountSummary.classList.add("hidden");
+            }
+
+            // ── Highlight most expensive item (Array.reduce as max-finder) ──
+
+            var mostExpensive = cart.reduce(function (max, item) {
+                return item.price * item.qty > max.price * max.qty ? item : max;
+            }, cart[0]);
+
+            highlightEl.classList.remove("hidden");
+            highlightEl.innerHTML =
+                '<i class="fa-solid fa-crown"></i> Most expensive item: <strong>' +
+                escapeHtml(mostExpensive.name) +
+                "</strong> — ₹" +
+                (mostExpensive.price * mostExpensive.qty).toFixed(2);
+        }
+
+        // ─── Helper: escape HTML to prevent XSS ───
+
+        function escapeHtml(text) {
+            var div = document.createElement("div");
+            div.appendChild(document.createTextNode(text));
+            return div.innerHTML;
+        }
+    </script>
+</body>
+
+</html>
