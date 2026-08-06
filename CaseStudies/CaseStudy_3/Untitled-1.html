@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Scholarship Eligibility Checker - Enter your marks to find your scholarship category">
+    <title>Scholarship Eligibility Checker</title>
+    
+    <!-- Updated Font: Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ===== Reset & Base ===== */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Updated Color Palette */
+            --bg-primary: #0f172a; /* Deep Slate */
+            --bg-card: rgba(30, 41, 59, 0.5); /* Transparent Slate */
+            --bg-card-hover: rgba(30, 41, 59, 0.8);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border-color: rgba(148, 163, 184, 0.15);
+            --white: #ffffff;
+            --primary-accent: #3b82f6; /* Vibrant Blue */
+            --shadow-glow: 0 10px 40px rgba(0, 0, 0, 0.3);
+
+            /* Scholarship tier colors */
+            --not-eligible: #f43f5e;
+            --bronze: #d97706;
+            --silver: #94a3b8;
+            --gold: #fbbf24;
+            --platinum: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ===== Colorful Background Glow ===== */
+        .background-orbs {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.15;
+            animation: float 24s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 500px;
+            height: 500px;
+            top: -10%;
+            right: -10%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6); /* Blue to Purple */
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            bottom: -5%;
+            left: -5%;
+            background: linear-gradient(135deg, #ec4899, #f43f5e); /* Pink to Rose */
+            animation-delay: -8s;
+        }
+
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            top: 40%;
+            left: 50%;
+            background: linear-gradient(135deg, #10b981, #3b82f6); /* Emerald to Blue */
+            animation-delay: -16s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(40px, -30px) scale(1.05); }
+            50% { transform: translate(-20px, 20px) scale(0.95); }
+            75% { transform: translate(30px, 40px) scale(1.03); }
+        }
+
+        /* ===== Container ===== */
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        /* ===== Header ===== */
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            margin-bottom: 10px;
+        }
+
+        .logo-icon {
+            display: flex;
+            align-items: center;
+            animation: bounce 2.5s ease-in-out infinite;
+        }
+
+        .logo-icon svg {
+            width: 42px;
+            height: 42px;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--white);
+            letter-spacing: -0.03em;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        /* ===== Main Card ===== */
+        .main-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 36px 32px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: var(--shadow-glow);
+            margin-bottom: 28px;
+        }
+
+        /* ===== Input Section ===== */
+        .input-section {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .input-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 16px 80px 16px 20px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            font-family: 'Montserrat', sans-serif;
+            color: var(--text-primary);
+            background: rgba(15, 23, 42, 0.6);
+            border: 2px solid var(--border-color);
+            border-radius: 14px;
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            -moz-appearance: textfield;
+        }
+
+        .input-wrapper input::-webkit-outer-spin-button,
+        .input-wrapper input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .input-wrapper input::placeholder {
+            color: rgba(255, 255, 255, 0.15);
+            font-weight: 600;
+        }
+
+        .input-wrapper input:focus {
+            border-color: var(--primary-accent);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+        }
+
+        .input-suffix {
+            position: absolute;
+            right: 20px;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 600;
+            pointer-events: none;
+        }
+
+        /* ===== Button ===== */
+        #checkBtn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 16px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            font-family: 'Montserrat', sans-serif;
+            color: var(--white);
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        #checkBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        #checkBtn:active {
+            transform: translateY(0);
+        }
+
+        /* ===== Result Section ===== */
+        .result-section {
+            margin-top: 28px;
+            display: none;
+        }
+
+        .result-section.visible {
+            display: block;
+            animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-card {
+            text-align: center;
+            padding: 32px 24px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            background: rgba(15, 23, 42, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .result-card.not-eligible::before { background: var(--not-eligible); }
+        .result-card.bronze::before { background: var(--bronze); }
+        .result-card.silver::before { background: var(--silver); }
+        .result-card.gold::before { background: var(--gold); }
+        .result-card.platinum::before { background: var(--platinum); }
+
+        .result-icon {
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: center;
+            animation: popIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+        }
+
+        .result-icon svg {
+            width: 64px;
+            height: 64px;
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .result-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+            letter-spacing: -0.01em;
+        }
+
+        .result-card.not-eligible .result-title { color: var(--not-eligible); }
+        .result-card.bronze .result-title { color: var(--bronze); }
+        .result-card.silver .result-title { color: var(--silver); }
+        .result-card.gold .result-title { color: var(--gold); }
+        .result-card.platinum .result-title { color: var(--platinum); }
+
+        .result-marks {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .result-message {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        /* ===== Criteria Section ===== */
+        .criteria-section {
+            margin-bottom: 40px;
+        }
+
+        .criteria-heading {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .criteria-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .criteria-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.2s ease, background 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .criteria-item:hover {
+            transform: translateX(4px);
+            background: var(--bg-card-hover);
+        }
+
+        .criteria-bar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+        }
+
+        .criteria-item.not-eligible .criteria-bar { background: var(--not-eligible); }
+        .criteria-item.bronze .criteria-bar { background: var(--bronze); }
+        .criteria-item.silver .criteria-bar { background: var(--silver); }
+        .criteria-item.gold .criteria-bar { background: var(--gold); }
+        .criteria-item.platinum .criteria-bar { background: var(--platinum); }
+
+        .criteria-icon {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .criteria-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .criteria-range {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            min-width: 80px;
+        }
+
+        .criteria-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .criteria-item.not-eligible .criteria-label { color: var(--not-eligible); }
+        .criteria-item.bronze .criteria-label { color: var(--bronze); }
+        .criteria-item.silver .criteria-label { color: var(--silver); }
+        .criteria-item.gold .criteria-label { color: var(--gold); }
+        .criteria-item.platinum .criteria-label { color: var(--platinum); }
+
+        /* ===== Shake Animation ===== */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
+
+        .shake {
+            animation: shake 0.4s ease;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 480px) {
+            body { padding: 24px 16px; }
+            .header h1 { font-size: 1.5rem; }
+            .main-card { padding: 28px 20px; border-radius: 16px; }
+            .input-wrapper input { font-size: 1.3rem; padding: 14px 70px 14px 16px; }
+            .result-icon svg { width: 48px; height: 48px; }
+            .result-title { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">
+                    <!-- Graduation Cap -->
+                    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M24 6L2 18L24 30L46 18L24 6Z" fill="#e8e8ed" stroke="#ffffff" stroke-width="1"/>
+                        <path d="M12 24V36L24 42L36 36V24L24 30L12 24Z" fill="#b0b0be" stroke="#d0d0d8" stroke-width="0.5"/>
+                        <line x1="40" y1="18" x2="40" y2="38" stroke="#d0d0d8" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M37 38C37 36.3 38.3 35 40 35C41.7 35 43 36.3 43 38C43 39.7 41.7 42 40 42C38.3 42 37 39.7 37 38Z" fill="#d0d0d8"/>
+                    </svg>
+                </span>
+                <h1>Scholarship Eligibility</h1>
+            </div>
+            <p class="subtitle">Enter your marks to discover your scholarship category</p>
+        </header>
+
+        <main class="main-card" id="mainCard">
+            <div class="input-section">
+                <label for="marksInput" class="input-label">Enter Your Marks</label>
+                <div class="input-wrapper">
+                    <input 
+                        type="number" 
+                        id="marksInput" 
+                        min="0" 
+                        max="100" 
+                        placeholder="0 – 100"
+                        autocomplete="off"
+                    >
+                    <span class="input-suffix">/ 100</span>
+                </div>
+                <button id="checkBtn" onclick="checkScholarship()">
+                    <span>Check Eligibility</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="result-section" id="resultSection">
+                <div class="result-card" id="resultCard">
+                    <div class="result-icon" id="resultIcon"></div>
+                    <h2 class="result-title" id="resultTitle"></h2>
+                    <p class="result-marks" id="resultMarks"></p>
+                    <p class="result-message" id="resultMessage"></p>
+                </div>
+            </div>
+        </main>
+
+        <section class="criteria-section">
+            <h2 class="criteria-heading">Scholarship Criteria</h2>
+            <div class="criteria-grid">
+                <div class="criteria-item not-eligible">
+                    <div class="criteria-bar"></div>
+                    <div class="criteria-icon">
+                        <!-- Shield with X -->
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L4 6V12C4 16.42 7.4 20.56 12 22C16.6 20.56 20 16.42 20 12V6L12 2Z" fill="#2a1215" stroke="#ef4444" stroke-width="1.5"/>
+                            <path d="M9.5 9.5L14.5 14.5M14.5 9.5L9.5 14.5" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="criteria-range">Below 50</div>
+                    <div class="criteria-label">Not Eligible</div>
+                </div>
+                <div class="criteria-item bronze">
+                    <div class="criteria-bar"></div>
+                    <div class="criteria-icon">
+                        <!-- Bronze Medal -->
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 2H16L14.5 7H9.5L8 2Z" fill="#a0522d"/>
+                            <path d="M10 2L8 7" stroke="#8b4513" stroke-width="0.5"/>
+                            <path d="M14 2L16 7" stroke="#8b4513" stroke-width="0.5"/>
+                            <circle cx="12" cy="14.5" r="7" fill="#cd7f32" stroke="#a0622a" stroke-width="0.8"/>
+                            <circle cx="12" cy="14.5" r="5.2" fill="none" stroke="#daa06d" stroke-width="0.6"/>
+                            <path d="M10 13L11.5 15L14.5 11.5" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="criteria-range">50 – 69</div>
+                    <div class="criteria-label">Bronze</div>
+                </div>
+                <div class="criteria-item silver">
+                    <div class="criteria-bar"></div>
+                    <div class="criteria-icon">
+                        <!-- Silver Medal -->
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 2H16L14.5 7H9.5L8 2Z" fill="#8a8a98"/>
+                            <path d="M10 2L8 7" stroke="#707080" stroke-width="0.5"/>
+                            <path d="M14 2L16 7" stroke="#707080" stroke-width="0.5"/>
+                            <circle cx="12" cy="14.5" r="7" fill="#c0c0c0" stroke="#a8a8b0" stroke-width="0.8"/>
+                            <circle cx="12" cy="14.5" r="5.2" fill="none" stroke="#d8d8e0" stroke-width="0.6"/>
+                            <path d="M10 13L11.5 15L14.5 11.5" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="criteria-range">70 – 84</div>
+                    <div class="criteria-label">Silver</div>
+                </div>
+                <div class="criteria-item gold">
+                    <div class="criteria-bar"></div>
+                    <div class="criteria-icon">
+                        <!-- Gold Medal -->
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 2H16L14.5 7H9.5L8 2Z" fill="#daa520"/>
+                            <path d="M10 2L8 7" stroke="#b8860b" stroke-width="0.5"/>
+                            <path d="M14 2L16 7" stroke="#b8860b" stroke-width="0.5"/>
+                            <circle cx="12" cy="14.5" r="7" fill="#ffd700" stroke="#daa520" stroke-width="0.8"/>
+                            <circle cx="12" cy="14.5" r="5.2" fill="none" stroke="#ffe44d" stroke-width="0.6"/>
+                            <path d="M10 13L11.5 15L14.5 11.5" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="criteria-range">85 – 94</div>
+                    <div class="criteria-label">Gold</div>
+                </div>
+                <div class="criteria-item platinum">
+                    <div class="criteria-bar"></div>
+                    <div class="criteria-icon">
+                        <!-- Diamond/Trophy -->
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 4H19L21 8L12 20L3 8L5 4Z" fill="#e5e4e2" stroke="#c8c8c6" stroke-width="0.8"/>
+                            <path d="M3 8H21" stroke="#d0d0ce" stroke-width="0.6"/>
+                            <path d="M12 20L8.5 8L10 4" stroke="#c8c8c6" stroke-width="0.5"/>
+                            <path d="M12 20L15.5 8L14 4" stroke="#c8c8c6" stroke-width="0.5"/>
+                            <path d="M8.5 8L10 4H14L15.5 8" fill="#f0efed" stroke="none"/>
+                        </svg>
+                    </div>
+                    <div class="criteria-range">95 – 100</div>
+                    <div class="criteria-label">Platinum</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Scholarship Eligibility Checker
+        // Detailed custom SVG icons for each scholarship tier
+        const ICONS = {
+            'not-eligible': `
+                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Shield body -->
+                    <path d="M32 4L8 16V32C8 44.84 18.8 56.12 32 60C45.2 56.12 56 44.84 56 32V16L32 4Z" fill="#2a1215" stroke="#ef4444" stroke-width="2.5"/>
+                    <!-- Inner shield highlight -->
+                    <path d="M32 10L14 19V32C14 42.2 22.4 51.2 32 54.4C41.6 51.2 50 42.2 50 32V19L32 10Z" fill="#1f0a0d" stroke="#ef4444" stroke-width="0.5" opacity="0.4"/>
+                    <!-- X mark -->
+                    <path d="M23 23L41 41" stroke="#ef4444" stroke-width="4.5" stroke-linecap="round"/>
+                    <path d="M41 23L23 41" stroke="#ef4444" stroke-width="4.5" stroke-linecap="round"/>
+                    <!-- Corner accents -->
+                    <circle cx="32" cy="14" r="1.5" fill="#ef4444" opacity="0.5"/>
+                </svg>`,
+
+            'bronze': `
+                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Ribbon -->
+                    <path d="M22 4H42L38 18H26L22 4Z" fill="#a0522d"/>
+                    <path d="M26 4L22 18" stroke="#8b4513" stroke-width="0.8"/>
+                    <path d="M32 4V18" stroke="#8b4513" stroke-width="0.5" opacity="0.4"/>
+                    <path d="M38 4L42 18" stroke="#8b4513" stroke-width="0.8"/>
+                    <!-- Medal body -->
+                    <circle cx="32" cy="38" r="20" fill="#cd7f32" stroke="#a0622a" stroke-width="2"/>
+                    <!-- Inner ring -->
+                    <circle cx="32" cy="38" r="15" fill="none" stroke="#daa06d" stroke-width="1.2"/>
+                    <!-- Star in center -->
+                    <polygon points="32,25 35,33 43,33 37,38 39,46 32,42 25,46 27,38 21,33 29,33" fill="#e8a848" stroke="#b8762a" stroke-width="0.5"/>
+                    <!-- Shine -->
+                    <path d="M22 28C24 24 28 22 32 22" stroke="#e8c088" stroke-width="1" stroke-linecap="round" opacity="0.6"/>
+                </svg>`,
+
+            'silver': `
+                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Ribbon -->
+                    <path d="M22 4H42L38 18H26L22 4Z" fill="#8a8a98"/>
+                    <path d="M26 4L22 18" stroke="#707080" stroke-width="0.8"/>
+                    <path d="M32 4V18" stroke="#707080" stroke-width="0.5" opacity="0.4"/>
+                    <path d="M38 4L42 18" stroke="#707080" stroke-width="0.8"/>
+                    <!-- Medal body -->
+                    <circle cx="32" cy="38" r="20" fill="#c0c0c0" stroke="#a8a8b0" stroke-width="2"/>
+                    <!-- Inner ring -->
+                    <circle cx="32" cy="38" r="15" fill="none" stroke="#d8d8e0" stroke-width="1.2"/>
+                    <!-- Star in center -->
+                    <polygon points="32,25 35,33 43,33 37,38 39,46 32,42 25,46 27,38 21,33 29,33" fill="#d8d8e0" stroke="#a0a0a8" stroke-width="0.5"/>
+                    <!-- Shine -->
+                    <path d="M22 28C24 24 28 22 32 22" stroke="#e8e8f0" stroke-width="1" stroke-linecap="round" opacity="0.7"/>
+                </svg>`,
+
+            'gold': `
+                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Ribbon -->
+                    <path d="M22 4H42L38 18H26L22 4Z" fill="#daa520"/>
+                    <path d="M26 4L22 18" stroke="#b8860b" stroke-width="0.8"/>
+                    <path d="M32 4V18" stroke="#b8860b" stroke-width="0.5" opacity="0.4"/>
+                    <path d="M38 4L42 18" stroke="#b8860b" stroke-width="0.8"/>
+                    <!-- Medal body -->
+                    <circle cx="32" cy="38" r="20" fill="#ffd700" stroke="#daa520" stroke-width="2"/>
+                    <!-- Inner ring -->
+                    <circle cx="32" cy="38" r="15" fill="none" stroke="#ffe44d" stroke-width="1.2"/>
+                    <!-- Star in center -->
+                    <polygon points="32,25 35,33 43,33 37,38 39,46 32,42 25,46 27,38 21,33 29,33" fill="#ffe866" stroke="#d4a800" stroke-width="0.5"/>
+                    <!-- Shine -->
+                    <path d="M22 28C24 24 28 22 32 22" stroke="#fff4a0" stroke-width="1" stroke-linecap="round" opacity="0.8"/>
+                </svg>`,
+
+            'platinum': `
+                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Diamond top facets -->
+                    <path d="M12 20H52L32 56L12 20Z" fill="#e5e4e2" stroke="#c8c8c6" stroke-width="1.5"/>
+                    <!-- Top edge -->
+                    <path d="M8 20L16 8H48L56 20H8Z" fill="#f0efed" stroke="#d0d0ce" stroke-width="1"/>
+                    <!-- Center facets -->
+                    <path d="M8 20L32 56L24 20Z" fill="#d8d7d5"/>
+                    <path d="M56 20L32 56L40 20Z" fill="#d8d7d5"/>
+                    <!-- Top inner facets -->
+                    <path d="M16 8L24 20H8Z" fill="#e0dfdd"/>
+                    <path d="M48 8L40 20H56Z" fill="#e0dfdd"/>
+                    <path d="M16 8H48L40 20H24Z" fill="#f5f4f2"/>
+                    <!-- Center vertical line -->
+                    <path d="M32 56L32 20" stroke="#c8c8c6" stroke-width="0.6"/>
+                    <path d="M32 20L16 8" stroke="#c8c8c6" stroke-width="0.5"/>
+                    <path d="M32 20L48 8" stroke="#c8c8c6" stroke-width="0.5"/>
+                    <!-- Sparkle highlights -->
+                    <circle cx="28" cy="16" r="1" fill="#fff" opacity="0.8"/>
+                    <circle cx="38" cy="14" r="0.7" fill="#fff" opacity="0.6"/>
+                    <path d="M20 26L22 24" stroke="#fff" stroke-width="0.8" stroke-linecap="round" opacity="0.5"/>
+                </svg>`
+        };
+
+        function checkScholarship() {
+            const input = document.getElementById('marksInput');
+            const resultSection = document.getElementById('resultSection');
+            const resultCard = document.getElementById('resultCard');
+            const resultIcon = document.getElementById('resultIcon');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultMarks = document.getElementById('resultMarks');
+            const resultMessage = document.getElementById('resultMessage');
+
+            const marks = parseFloat(input.value);
+
+            // Validate input
+            if (isNaN(marks) || marks < 0 || marks > 100) {
+                input.classList.add('shake');
+                setTimeout(() => input.classList.remove('shake'), 400);
+                resultSection.classList.remove('visible');
+                alert('Please enter valid marks between 0 and 100.');
+                return;
+            }
+
+            let category, message, cssClass;
+
+            if (marks < 50) {
+                category = 'Not Eligible';
+                message = 'Score below 50. Keep working hard — you can improve!';
+                cssClass = 'not-eligible';
+            } else if (marks >= 50 && marks <= 69) {
+                category = 'Bronze Scholarship';
+                message = 'Great start! You\'ve earned a Bronze Scholarship.';
+                cssClass = 'bronze';
+            } else if (marks >= 70 && marks <= 84) {
+                category = 'Silver Scholarship';
+                message = 'Impressive performance! You\'ve earned a Silver Scholarship.';
+                cssClass = 'silver';
+            } else if (marks >= 85 && marks <= 94) {
+                category = 'Gold Scholarship';
+                message = 'Outstanding! You\'ve earned a Gold Scholarship.';
+                cssClass = 'gold';
+            } else if (marks >= 95 && marks <= 100) {
+                category = 'Platinum Scholarship';
+                message = 'Exceptional! You\'ve earned the prestigious Platinum Scholarship!';
+                cssClass = 'platinum';
+            }
+
+            // Update the result card
+            resultCard.className = 'result-card ' + cssClass;
+            resultIcon.innerHTML = ICONS[cssClass];
+            resultTitle.textContent = category;
+            resultMarks.textContent = 'Your Marks: ' + marks + ' / 100';
+            resultMessage.textContent = message;
+
+            // Show result with animation
+            resultSection.classList.remove('visible');
+            // Force reflow to restart animation
+            void resultSection.offsetWidth;
+            resultSection.classList.add('visible');
+        }
+
+        // Allow pressing Enter to check
+        document.getElementById('marksInput').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                checkScholarship();
+            }
+        });
+    </script>
+</body>
+</html>

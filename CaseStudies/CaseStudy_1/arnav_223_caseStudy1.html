@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="SIT Nagpur - Department of Computer Science & Engineering. Explore our programs, faculty, and student resources." />
+  <title>SIT Nagpur | Department of Computer Science & Student Portal</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- Swapped to Poppins for modern UI and Fira Code for data/numbers -->
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  
+  <style>
+    /* =========================================================
+       1. GLOBAL & VARIABLES (MODERN DARK THEME)
+       ========================================================= */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --primary:       #06b6d4; /* Cyber Cyan */
+      --primary-dark:  #0891b2;
+      --accent:        #8b5cf6; /* Neon Purple */
+      --secondary:     #f43f5e; /* Rose */
+      --gold:          #fbbf24;
+      --green:         #10b981;
+      --orange:        #f97316;
+      
+      /* Dark Theme Backgrounds */
+      --bg-dark:       #0f172a; /* Deep Slate */
+      --bg-card:       #1e293b; /* Lighter Slate for Cards */
+      --bg-card2:      #334155; /* Hover/Input States */
+      
+      /* Dark Theme Typography */
+      --text-main:     #f8fafc; /* Crisp Off-White */
+      --text-muted:    #94a3b8; /* Slate Gray */
+      --border:        #334155;
+      
+      --shadow:        0 10px 40px rgba(0, 0, 0, 0.4);
+      --radius:        16px;
+      --transition:    0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* Updated Background Glowing Orbs for Dark Mode */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(6, 182, 212, 0.1) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 50% 50%, rgba(244, 63, 94, 0.05) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Font Utility for Numbers/Code */
+    .mono-font {
+      font-family: 'Fira Code', monospace;
+    }
+
+    /* =========================================================
+       2. NAVBAR
+       ========================================================= */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(20px);
+      background: rgba(15, 23, 42, 0.85); /* Dark transparent nav */
+      border-bottom: 1px solid var(--border);
+      padding: 0 5%;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 70px;
+      animation: slideDown 0.6s ease;
+    }
+
+    @keyframes slideDown {
+      from { transform: translateY(-100%); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    .nav-logo {
+      display: flex; align-items: center; gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 42px; height: 42px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 10px;
+      display: grid; place-items: center;
+      font-size: 20px; font-weight: 800; color: #fff;
+      box-shadow: 0 4px 18px rgba(6, 182, 212, 0.4);
+    }
+
+    .nav-logo span {
+      font-weight: 700; font-size: 1.1rem; color: var(--text-main);
+    }
+
+    .nav-links { display: flex; gap: 6px; list-style: none; }
+
+    .nav-links a {
+      color: var(--text-muted); text-decoration: none;
+      font-size: 0.9rem; font-weight: 500;
+      padding: 8px 16px; border-radius: 8px;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .nav-links a:hover { color: var(--text-main); background: rgba(255,255,255,0.05); }
+    .nav-links a.active { color: var(--primary); background: rgba(6, 182, 212, 0.1); }
+
+    .nav-cta {
+      background: linear-gradient(135deg, var(--primary), var(--accent)) !important;
+      color: #fff !important;
+      border-radius: 10px !important;
+      box-shadow: 0 4px 16px rgba(139, 92, 246, 0.3);
+    }
+
+    /* =========================================================
+       3. DEPARTMENT VIEW STYLES
+       ========================================================= */
+    .hero {
+      position: relative; z-index: 1;
+      min-height: calc(100vh - 70px);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 80px 5% 60px;
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(6, 182, 212, 0.1);
+      border: 1px solid rgba(6, 182, 212, 0.2);
+      border-radius: 50px; padding: 8px 20px;
+      font-size: 0.82rem; font-weight: 600;
+      color: var(--primary); letter-spacing: 0.06em; text-transform: uppercase;
+      margin-bottom: 28px;
+      animation: fadeUp 0.8s ease 0.2s both;
+    }
+
+    .hero-badge::before {
+      content: '●'; font-size: 8px; color: var(--primary);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 4.8rem);
+      font-weight: 800; line-height: 1.1;
+      margin-bottom: 24px;
+      animation: fadeUp 0.8s ease 0.35s both;
+    }
+
+    .highlight { 
+      background: linear-gradient(to right, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      max-width: 620px; color: var(--text-muted);
+      font-size: 1.08rem; line-height: 1.8;
+      margin-bottom: 44px;
+      animation: fadeUp 0.8s ease 0.5s both;
+    }
+
+    .hero-btns {
+      display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+      animation: fadeUp 0.8s ease 0.65s both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(30px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff; border: none;
+      padding: 16px 36px; border-radius: 14px;
+      font-size: 1rem; font-weight: 600; cursor: pointer;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 10px;
+      box-shadow: 0 6px 28px rgba(6, 182, 212, 0.25);
+      transition: var(--transition);
+    }
+
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(6, 182, 212, 0.4); }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 16px 36px; border-radius: 14px;
+      font-size: 1rem; font-weight: 600; cursor: pointer;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 10px;
+      backdrop-filter: blur(10px);
+      transition: var(--transition);
+    }
+
+    .btn-secondary:hover { background: var(--bg-card2); border-color: var(--primary); transform: translateY(-3px); }
+
+    /* STATS STRIP */
+    .stats-strip {
+      position: relative; z-index: 1;
+      display: flex; justify-content: center; flex-wrap: wrap;
+      background: rgba(30, 41, 59, 0.6);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+    }
+
+    .stat-item {
+      flex: 1; min-width: 160px;
+      padding: 32px 20px; text-align: center;
+      border-right: 1px solid var(--border);
+      transition: var(--transition);
+    }
+
+    .stat-item:last-child { border-right: none; }
+    .stat-item:hover { background: rgba(255,255,255,0.02); }
+
+    .stat-num {
+      font-size: 2.4rem; font-weight: 800;
+      color: var(--primary);
+      display: block;
+    }
+
+    .stat-label { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; margin-top: 4px; }
+
+    /* SECTION COMMON */
+    section { position: relative; z-index: 1; padding: 90px 5%; }
+
+    .section-tag {
+      display: inline-block;
+      background: rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      color: var(--accent);
+      font-size: 0.78rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 6px 16px; border-radius: 50px; margin-bottom: 18px;
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 800; margin-bottom: 14px;
+    }
+
+    .section-sub {
+      color: var(--text-muted); font-size: 1rem;
+      line-height: 1.7; max-width: 560px; margin-bottom: 56px;
+    }
+
+    /* ABOUT */
+    #about {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 64px; align-items: center;
+    }
+
+    .about-visual { position: relative; }
+
+    .about-card-main {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 24px; padding: 40px;
+      box-shadow: var(--shadow);
+    }
+
+    .about-icon {
+      width: 60px; height: 60px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 14px;
+      display: grid; place-items: center;
+      font-size: 28px; margin-bottom: 20px; color: white;
+      box-shadow: 0 8px 24px rgba(6, 182, 212, 0.3);
+    }
+
+    .about-card-main h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 12px; }
+    .about-card-main p  { color: var(--text-muted); line-height: 1.7; font-size: 0.95rem; }
+
+    .floating-badge {
+      position: absolute;
+      background: linear-gradient(135deg, var(--gold), #f59e0b);
+      color: #1a1400; font-weight: 700; font-size: 0.82rem;
+      padding: 10px 18px; border-radius: 50px;
+      box-shadow: 0 8px 24px rgba(251,191,36,0.3);
+    }
+
+    .floating-badge.top-right { top: -18px; right: -18px; }
+    .floating-badge.bot-left  { bottom: -18px; left: -18px; }
+
+    .feature-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+
+    .feature-list li {
+      display: flex; align-items: center; gap: 12px;
+      font-size: 0.95rem; color: var(--text-muted);
+    }
+
+    .feature-list li::before {
+      content: '✓';
+      width: 26px; height: 26px;
+      background: rgba(6, 182, 212, 0.15);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      color: var(--primary); border-radius: 50%;
+      display: grid; place-items: center;
+      font-size: 0.7rem; font-weight: 800; flex-shrink: 0;
+    }
+
+    /* PROGRAMS */
+    #programs { background: rgba(255,255,255,0.01); }
+
+    .programs-list {
+      display: flex; flex-direction: column; gap: 16px;
+      max-width: 1000px; margin: 0 auto;
+    }
+
+    .program-row {
+      display: grid; grid-template-columns: auto 1fr auto; gap: 40px;
+      align-items: center; padding: 32px 40px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 16px; transition: var(--transition); cursor: pointer;
+    }
+
+    .program-row:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow);
+      transform: translateX(4px);
+    }
+
+    .prog-number {
+      font-size: 2.5rem; font-weight: 800; color: var(--border);
+      transition: var(--transition);
+    }
+
+    .program-row:hover .prog-number { color: var(--primary); }
+
+    .prog-content h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; color: var(--text-main); }
+    .prog-content p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; max-width: 600px; }
+
+    .prog-meta { text-align: right; }
+    .prog-duration { display: block; color: var(--primary); font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; }
+    .prog-seats { color: var(--text-muted); font-size: 0.85rem; font-weight: 500; }
+
+    @media (max-width: 768px) {
+      .program-row { grid-template-columns: 1fr; gap: 16px; padding: 24px; }
+      .prog-meta { text-align: left; }
+      .prog-number { display: none; }
+    }
+
+    /* FACULTY */
+    .faculty-list {
+      display: flex; flex-direction: column; gap: 16px; max-width: 900px; margin: 0 auto;
+    }
+
+    .faculty-row {
+      display: flex; align-items: center; gap: 24px; padding: 24px 32px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 16px; transition: var(--transition); cursor: pointer;
+    }
+
+    .faculty-row:hover { border-color: var(--accent); transform: translateX(4px); box-shadow: var(--shadow); }
+
+    .faculty-avatar {
+      width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center;
+      font-size: 1.1rem; font-weight: 700; flex-shrink: 0; color: #fff;
+    }
+
+    .faculty-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+    .faculty-row h4 { font-weight: 700; font-size: 1.15rem; color: var(--text-main); margin: 0; }
+    
+    .faculty-meta { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+    .designation { color: var(--primary); font-size: 0.9rem; font-weight: 600; margin: 0; }
+    .specialization { color: var(--text-muted); font-size: 0.85rem; font-weight: 500; }
+
+    @media (max-width: 600px) {
+      .faculty-row { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .faculty-meta { flex-direction: column; align-items: flex-start; gap: 8px; }
+    }
+
+    /* STUDENT BANNER */
+    .student-banner {
+      position: relative; z-index: 1; margin: 0 5% 80px;
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(139, 92, 246, 0.1));
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 24px; padding: 56px 60px;
+      display: flex; align-items: center; justify-content: space-between; gap: 40px; overflow: hidden;
+    }
+
+    .student-banner::before {
+      content: '🎓'; position: absolute; right: 60px; top: 50%; transform: translateY(-50%);
+      font-size: 140px; opacity: 0.05; pointer-events: none;
+    }
+
+    .banner-content h2 { font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 800; margin-bottom: 12px; }
+    .banner-content p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.7; max-width: 500px; }
+
+    /* DEPT FOOTER */
+    footer.dept-footer {
+      position: relative; z-index: 1; background: var(--bg-card);
+      border-top: 1px solid var(--border); padding: 56px 5% 28px;
+    }
+
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+    .footer-brand p { color: var(--text-muted); font-size: 0.88rem; line-height: 1.7; margin-top: 14px; max-width: 280px; }
+    .footer-col h5 { font-weight: 700; font-size: 0.95rem; margin-bottom: 16px; color: var(--text-main); }
+    .footer-col ul  { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul a { color: var(--text-muted); text-decoration: none; font-size: 0.88rem; transition: var(--transition); }
+    .footer-col ul a:hover { color: var(--primary); }
+    .footer-bottom {
+      border-top: 1px solid var(--border); padding-top: 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      color: var(--text-muted); font-size: 0.82rem;
+    }
+
+    /* =========================================================
+       4. STUDENT PORTAL VIEW STYLES
+       ========================================================= */
+    .page-header {
+      position: relative; z-index: 1;
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(15, 23, 42, 0.8));
+      border-bottom: 1px solid var(--border);
+      padding: 60px 5% 48px; text-align: center;
+    }
+
+    .page-header .section-tag {
+      display: inline-block; background: rgba(6, 182, 212, 0.1);
+      border: 1px solid rgba(6, 182, 212, 0.3); color: var(--primary);
+      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 6px 18px; border-radius: 50px; margin-bottom: 20px;
+      animation: fadeUp 0.7s ease 0.1s both;
+    }
+
+    .page-header h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 900; margin-bottom: 14px; animation: fadeUp 0.7s ease 0.25s both;
+    }
+
+    .page-header h1 span { color: var(--primary); }
+    .page-header p {
+      color: var(--text-muted); font-size: 1rem; max-width: 520px;
+      margin: 0 auto; line-height: 1.7; animation: fadeUp 0.7s ease 0.4s both;
+    }
+
+    /* SEARCH & FILTER */
+    .search-bar-wrap {
+      position: relative; z-index: 1; padding: 32px 5%;
+      display: flex; gap: 16px; flex-wrap: wrap;
+      align-items: center; justify-content: center;
+    }
+
+    .search-input-wrap { position: relative; flex: 1; max-width: 480px; min-width: 240px; }
+    .search-input-wrap input {
+      width: 100%; background: var(--bg-card2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px 20px 14px 48px; color: var(--text-main);
+      font-size: 0.95rem; font-family: 'Poppins', sans-serif; outline: none; transition: var(--transition);
+    }
+    .search-input-wrap input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2); }
+    .search-input-wrap input::placeholder { color: var(--text-muted); }
+    .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 1rem; pointer-events: none; color: var(--text-muted); }
+
+    .filter-select {
+      background: var(--bg-card2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px 20px; color: var(--text-main);
+      font-size: 0.9rem; font-family: 'Poppins', sans-serif; outline: none; cursor: pointer;
+      transition: var(--transition); appearance: none; min-width: 160px;
+    }
+    .filter-select:focus { border-color: var(--primary); }
+
+    /* STATS ROW */
+    .stats-row {
+      position: relative; z-index: 1; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px; padding: 0 5% 48px;
+    }
+    .mini-stat {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 24px 20px; display: flex; align-items: center; gap: 16px; transition: var(--transition);
+    }
+    .mini-stat:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: var(--shadow); }
+    .mini-stat-icon { width: 48px; height: 48px; border-radius: 12px; display: grid; place-items: center; font-size: 1.4rem; flex-shrink: 0; color: #fff; }
+    .mini-stat-data strong { font-size: 1.6rem; font-weight: 800; display: block; color: var(--text-main); }
+    .mini-stat-data span { color: var(--text-muted); font-size: 0.82rem; font-weight: 500; }
+
+    /* STUDENT TABLE */
+    .table-section { position: relative; z-index: 1; padding: 0 5% 80px; }
+    .table-wrap { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; box-shadow: var(--shadow); }
+    .table-header-row { padding: 20px 28px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.02); }
+    .table-header-row h3 { font-weight: 700; font-size: 1.1rem; }
+    .table-header-row span { color: var(--text-muted); font-size: 0.85rem; }
+
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: rgba(255,255,255,0.03); }
+    thead th { padding: 14px 20px; text-align: left; font-size: 0.78rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+    tbody tr { border-bottom: 1px solid var(--border); transition: var(--transition); }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(255,255,255,0.02); }
+    tbody td { padding: 16px 20px; font-size: 0.9rem; vertical-align: middle; }
+
+    .student-avatar {
+      width: 38px; height: 38px; border-radius: 50%; display: inline-grid; place-items: center;
+      font-size: 0.85rem; font-weight: 700; color: #fff; margin-right: 10px; vertical-align: middle;
+    }
+    .student-name { font-weight: 600; color: var(--text-main); }
+    .student-id   { color: var(--text-muted); font-size: 0.8rem; }
+
+    .badge { display: inline-block; padding: 4px 12px; border-radius: 50px; font-size: 0.76rem; font-weight: 700; }
+    .badge-blue   { background: rgba(6, 182, 212, 0.2); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.3); }
+    .badge-green  { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-orange { background: rgba(249, 115, 22, 0.2);  color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.3); }
+    .badge-red    { background: rgba(244, 63, 94, 0.2); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.3); }
+    .badge-teal   { background: rgba(139, 92, 246, 0.2);  color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.3); }
+
+    .progress-bar-wrap { background: var(--bg-card2); border-radius: 50px; height: 8px; width: 100px; overflow: hidden; }
+    .progress-bar { height: 100%; border-radius: 50px; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width 1s ease; }
+    .cgpa-val { font-weight: 700; color: var(--accent); font-size: 0.95rem; }
+
+    .pagination { padding: 24px 28px; display: flex; align-items: center; justify-content: center; gap: 8px; border-top: 1px solid var(--border); }
+    .page-btn {
+      width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center;
+      background: none; border: 1px solid var(--border); color: var(--text-muted); cursor: pointer;
+      font-size: 0.88rem; transition: var(--transition);
+    }
+    .page-btn:hover, .page-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+    /* PROFILE CARDS */
+    .profile-section { position: relative; z-index: 1; padding: 0 5% 80px; }
+    .profile-section-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 28px; }
+    .profile-list { display: flex; flex-direction: column; gap: 16px; max-width: 1000px; margin: 0 auto; }
+    .profile-row {
+      display: flex; align-items: center; gap: 32px; padding: 24px 32px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; transition: var(--transition); cursor: pointer;
+    }
+    .profile-row:hover { border-color: var(--accent); transform: translateX(4px); box-shadow: var(--shadow); }
+    .profile-ava { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; font-size: 1.2rem; font-weight: 800; color: #fff; flex-shrink: 0; }
+    .profile-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+    .profile-row h4 { font-weight: 700; font-size: 1.15rem; margin: 0; color: var(--text-main); }
+    .profile-row .roll { color: var(--text-muted); font-size: 0.85rem; }
+    .profile-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+    .profile-stats { display: flex; gap: 32px; text-align: right; }
+    .pstat { display: flex; flex-direction: column; align-items: flex-end; }
+    .pstat strong { font-size: 1.15rem; font-weight: 800; color: var(--text-main); }
+    .pstat span { color: var(--text-muted); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    @media (max-width: 768px) {
+      .profile-row { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .profile-stats { justify-content: space-between; width: 100%; text-align: left; }
+      .pstat { align-items: flex-start; }
+    }
+
+    /* NOTICES */
+    .notices-section { position: relative; z-index: 1; padding: 0 5% 80px; }
+    .notices-list { display: flex; flex-direction: column; gap: 16px; max-width: 1000px; margin: 0 auto; }
+    .notice-card {
+      display: flex; align-items: center; gap: 24px; background: var(--bg-card);
+      border: 1px solid var(--border); border-left: 4px solid var(--primary);
+      border-radius: 12px; padding: 24px 32px; transition: var(--transition);
+    }
+    .notice-card:hover { transform: translateX(4px); box-shadow: var(--shadow); }
+    .notice-card.urgent { border-left-color: var(--secondary); }
+    .notice-card.success { border-left-color: var(--green); }
+    .notice-card.info    { border-left-color: var(--accent); }
+    .notice-content { flex: 1; }
+    .notice-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .notice-head .tag { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; padding: 4px 12px; border-radius: 50px; }
+    .notice-card h4 { font-weight: 700; font-size: 1.1rem; margin-bottom: 6px; color: var(--text-main); }
+    .notice-card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; max-width: 800px; margin: 0; }
+    .notice-date-container { text-align: right; min-width: 100px; }
+    .notice-date  { color: var(--text-muted); font-size: 0.85rem; font-weight: 500; }
+
+    /* STUDENT FOOTER */
+    footer.student-footer {
+      position: relative; z-index: 1; background: var(--bg-card); border-top: 1px solid var(--border);
+      padding: 28px 5%; display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px;
+    }
+    footer.student-footer p { color: var(--text-muted); font-size: 0.85rem; }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; transition: var(--transition); cursor: pointer; }
+    .footer-links a:hover { color: var(--primary); }
+
+    /* =========================================================
+       5. UTILITY & RESPONSIVE
+       ========================================================= */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .student-row.hidden { display: none; }
+
+    @media (max-width: 900px) {
+      #about { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .student-banner { flex-direction: column; text-align: center; }
+      .notices-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 700px) {
+      .nav-links { display: none; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .hero-btns { flex-direction: column; align-items: center; }
+      table thead { display: none; }
+      tbody td { display: block; }
+    }
+  </style>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    i[data-lucide] {
+      width: 1.2em;
+      height: 1.2em;
+      vertical-align: text-bottom;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav id="main-nav">
+    <a href="#" onclick="switchView('department'); return false;" class="nav-logo">
+      <div class="logo-icon">S</div>
+      <span>SIT Nagpur</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#about" class="nav-item active" onclick="goToSection('#about'); return false;">About</a></li>
+      <li><a href="#programs" class="nav-item" onclick="goToSection('#programs'); return false;">Programs</a></li>
+      <li><a href="#faculty" class="nav-item" onclick="goToSection('#faculty'); return false;">Faculty</a></li>
+      <li><a href="#" class="nav-cta" id="nav-student-btn" onclick="switchView('students'); return false;">Student Info</a></li>
+    </ul>
+  </nav>
+
+  <!-- =========================================================
+       VIEW 1: DEPARTMENT CONTENT
+       ========================================================= -->
+  <div id="view-department">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-badge">Affiliated to RTMNU &middot; AICTE Approved</div>
+      <h1>
+        Department of<br>
+        <span class="highlight">Computer Science</span><br>
+        &amp; Engineering
+      </h1>
+      <p>
+        Empowering the next generation of innovators at
+        <strong>Symbiosis Institute of Technology, Nagpur</strong>.
+        Excellence in education, research, and industry collaboration.
+      </p>
+      <div class="hero-btns">
+        <a href="#" onclick="switchView('students'); return false;" class="btn-primary" id="student-info-btn">
+          <i data-lucide="terminal"></i> Student Information
+        </a>
+        <a href="#programs" onclick="goToSection('#programs'); return false;" class="btn-secondary">
+          <i data-lucide="book-open"></i> Explore Programs
+        </a>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <div class="stats-strip">
+      <div class="stat-item">
+        <span class="stat-num mono-font">1200+</span>
+        <span class="stat-label">Students Enrolled</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num mono-font">48</span>
+        <span class="stat-label">Expert Faculty</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num mono-font">95%</span>
+        <span class="stat-label">Placement Rate</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num mono-font">25+</span>
+        <span class="stat-label">Years of Excellence</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num mono-font">150+</span>
+        <span class="stat-label">Research Papers</span>
+      </div>
+    </div>
+
+    <!-- ABOUT -->
+    <section id="about">
+      <div class="about-visual reveal">
+        <div class="about-card-main">
+          <div class="about-icon"><i data-lucide="cpu"></i></div>
+          <h3>Vision of the Department</h3>
+          <p>
+            To be a globally recognized centre of excellence in Computer Science
+            &amp; Engineering education, producing competent graduates who contribute
+            meaningfully to society through innovation and ethical practice.
+          </p>
+        </div>
+        <div class="floating-badge top-right"><i data-lucide="shield-check"></i> NAAC Accredited</div>
+        <div class="floating-badge bot-left"><i data-lucide="award"></i> NBA Approved</div>
+      </div>
+
+      <div class="about-text reveal">
+        <div class="section-tag">About Us</div>
+        <h2 class="section-title">Shaping Tomorrow's<br>Tech Leaders</h2>
+        <p class="section-sub" style="max-width:100%; margin-bottom:28px;">
+          The Department of Computer Science &amp; Engineering at SIT Nagpur has been
+          at the forefront of technological education since its establishment. We foster
+          a culture of learning, research, and innovation.
+        </p>
+        <ul class="feature-list">
+          <li>State-of-the-art Computing Laboratories</li>
+          <li>Industry-integrated Curriculum &amp; Live Projects</li>
+          <li>Research Collaborations with IITs &amp; NITs</li>
+          <li>Active Placement Cell with 200+ Company Tie-ups</li>
+          <li>Student Clubs: Coding, AI/ML, Robotics, Cybersecurity</li>
+          <li>Merit Scholarships &amp; Financial Aid Programs</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- PROGRAMS -->
+    <section id="programs">
+      <div style="text-align:center; margin-bottom:56px;">
+        <div class="section-tag">Academics</div>
+        <h2 class="section-title">Our Programs</h2>
+        <p class="section-sub" style="margin:0 auto;">
+          Choose from a diverse range of undergraduate and postgraduate programs
+          designed to meet global industry standards.
+        </p>
+      </div>
+      <div class="programs-list">
+        <div class="program-row reveal">
+          <div class="prog-number mono-font">01</div>
+          <div class="prog-content">
+            <h3>B.E. Computer Science &amp; Engineering</h3>
+            <p>Comprehensive 4-year program covering algorithms, OS, networks, databases, AI/ML, and software engineering.</p>
+          </div>
+          <div class="prog-meta">
+            <span class="prog-duration mono-font">4 Years</span>
+            <span class="prog-seats">60 Seats</span>
+          </div>
+        </div>
+        <div class="program-row reveal">
+          <div class="prog-number mono-font">02</div>
+          <div class="prog-content">
+            <h3>B.E. AI &amp; Machine Learning</h3>
+            <p>Specialized program focusing on deep learning, data science, computer vision, and intelligent systems.</p>
+          </div>
+          <div class="prog-meta">
+            <span class="prog-duration mono-font">4 Years</span>
+            <span class="prog-seats">60 Seats</span>
+          </div>
+        </div>
+        <div class="program-row reveal">
+          <div class="prog-number mono-font">03</div>
+          <div class="prog-content">
+            <h3>B.E. Cybersecurity</h3>
+            <p>Modern curriculum covering ethical hacking, network security, cryptography, and digital forensics.</p>
+          </div>
+          <div class="prog-meta">
+            <span class="prog-duration mono-font">4 Years</span>
+            <span class="prog-seats">30 Seats</span>
+          </div>
+        </div>
+        <div class="program-row reveal">
+          <div class="prog-number mono-font">04</div>
+          <div class="prog-content">
+            <h3>B.E. Information Technology</h3>
+            <p>Broad-based program in software development, web technologies, cloud computing, and enterprise systems.</p>
+          </div>
+          <div class="prog-meta">
+            <span class="prog-duration mono-font">4 Years</span>
+            <span class="prog-seats">60 Seats</span>
+          </div>
+        </div>
+        <div class="program-row reveal">
+          <div class="prog-number mono-font">05</div>
+          <div class="prog-content">
+            <h3>M.Tech Computer Science</h3>
+            <p>Advanced 2-year postgraduate program with research opportunities and specializations in cutting-edge areas.</p>
+          </div>
+          <div class="prog-meta">
+            <span class="prog-duration mono-font">2 Years</span>
+            <span class="prog-seats">24 Seats</span>
+          </div>
+        </div>
+        <div class="program-row reveal">
+          <div class="prog-number mono-font">06</div>
+          <div class="prog-content">
+            <h3>M.Tech Data Science</h3>
+            <p>Data-driven postgraduate program with hands-on industry projects, big data, and analytics specialization.</p>
+          </div>
+          <div class="prog-meta">
+            <span class="prog-duration mono-font">2 Years</span>
+            <span class="prog-seats">24 Seats</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FACULTY -->
+    <section id="faculty">
+      <div style="text-align:center; margin-bottom:56px;">
+        <div class="section-tag">Our Team</div>
+        <h2 class="section-title">Meet the Faculty</h2>
+        <p class="section-sub" style="margin:0 auto;">
+          Learn from experienced academicians and industry experts who are passionate
+          about shaping your future.
+        </p>
+      </div>
+      <div class="faculty-list">
+        <div class="faculty-row reveal">
+          <div class="faculty-avatar" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));">DR</div>
+          <div class="faculty-info">
+            <h4>Dr. Rajesh Sharma</h4>
+            <div class="faculty-meta">
+              <span class="designation">Head of Department</span>
+              <span class="specialization">Ph.D &middot; AI &amp; Machine Learning</span>
+            </div>
+          </div>
+        </div>
+        <div class="faculty-row reveal">
+          <div class="faculty-avatar" style="background:linear-gradient(135deg,var(--accent),#6d28d9);">PM</div>
+          <div class="faculty-info">
+            <h4>Prof. Priya Mehta</h4>
+            <div class="faculty-meta">
+              <span class="designation">Associate Professor</span>
+              <span class="specialization">M.Tech &middot; Data Science</span>
+            </div>
+          </div>
+        </div>
+        <div class="faculty-row reveal">
+          <div class="faculty-avatar" style="background:linear-gradient(135deg,var(--secondary),#be123c);">AK</div>
+          <div class="faculty-info">
+            <h4>Prof. Amit Kumar</h4>
+            <div class="faculty-meta">
+              <span class="designation">Assistant Professor</span>
+              <span class="specialization">Ph.D &middot; Cybersecurity</span>
+            </div>
+          </div>
+        </div>
+        <div class="faculty-row reveal">
+          <div class="faculty-avatar" style="background:linear-gradient(135deg,var(--orange),#c2410c);">SP</div>
+          <div class="faculty-info">
+            <h4>Dr. Sneha Patil</h4>
+            <div class="faculty-meta">
+              <span class="designation">Associate Professor</span>
+              <span class="specialization">Ph.D &middot; Cloud Computing</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STUDENT BANNER -->
+    <div class="student-banner reveal">
+      <div class="banner-content">
+        <h2><i data-lucide="terminal"></i> Access Student Information Portal</h2>
+        <p>
+          View student profiles, academic records, attendance, results, and
+          important notices — all in one place. Click below to explore the
+          student information dashboard.
+        </p>
+      </div>
+      <a href="#" onclick="switchView('students'); return false;" class="btn-primary" style="flex-shrink:0;">
+        Launch Dashboard <i data-lucide="chevron-right"></i>
+      </a>
+    </div>
+
+    <!-- DEPT FOOTER -->
+    <footer class="dept-footer">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#" onclick="switchView('department'); return false;" class="nav-logo" style="display:inline-flex; margin-bottom:8px;">
+            <div class="logo-icon">S</div>
+            <span>SIT Nagpur</span>
+          </a>
+          <p>Symbiosis Institute of Technology, Nagpur.<br>
+             Department of Computer Science &amp; Engineering.<br>
+             Committed to excellence in technical education.</p>
+        </div>
+        <div class="footer-col">
+          <h5>Quick Links</h5>
+          <ul>
+            <li><a href="#" onclick="goToSection('#about'); return false;">About Us</a></li>
+            <li><a href="#" onclick="goToSection('#programs'); return false;">Programs</a></li>
+            <li><a href="#" onclick="goToSection('#faculty'); return false;">Faculty</a></li>
+            <li><a href="#" onclick="switchView('students'); return false;">Student Info</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Resources</h5>
+          <ul>
+            <li><a href="#">Library</a></li>
+            <li><a href="#">E-Learning</a></li>
+            <li><a href="#">Research Lab</a></li>
+            <li><a href="#">Placement Cell</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Contact</h5>
+          <ul>
+            <li><a href="#"><i data-lucide="map-pin"></i> Nagpur, Maharashtra</a></li>
+            <li><a href="#"><i data-lucide="phone"></i> +91 712 000 0000</a></li>
+            <li><a href="#"><i data-lucide="mail"></i> cse@sitnagpur.edu.in</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 SIT Nagpur &mdash; Department of CSE. All rights reserved.</span>
+        <span>Designed with <i data-lucide="terminal"></i> and excellence</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- =========================================================
+       VIEW 2: STUDENT INFORMATION PORTAL
+       ========================================================= -->
+  <div id="view-students" style="display: none;">
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <div class="section-tag"><i data-lucide="database"></i> System Logs</div>
+      <h1>Student <span>Information</span> Dashboard</h1>
+      <p>
+        Access comprehensive academic profiles, performance records, attendance data,
+        and important notices for all enrolled students.
+      </p>
+    </div>
+
+    <!-- SEARCH & FILTER -->
+    <div class="search-bar-wrap">
+      <div class="search-input-wrap">
+        <span class="search-icon"><i data-lucide="search"></i></span>
+        <input
+          type="text"
+          id="student-search"
+          placeholder="Search by name, PRN, or branch..."
+        />
+      </div>
+      <select class="filter-select" id="branch-filter">
+        <option value="">All Branches</option>
+        <option value="CSE">CSE</option>
+        <option value="AI/ML">AI/ML</option>
+        <option value="IT">IT</option>
+        <option value="Cyber">Cybersecurity</option>
+      </select>
+      <select class="filter-select" id="year-filter">
+        <option value="">All Years</option>
+        <option value="1st">1st Year</option>
+        <option value="2nd">2nd Year</option>
+        <option value="3rd">3rd Year</option>
+        <option value="4th">4th Year</option>
+      </select>
+    </div>
+
+    <!-- MINI STATS -->
+    <div class="stats-row reveal">
+      <div class="mini-stat">
+        <div class="mini-stat-icon" style="background:rgba(6,182,212,0.15); color:#22d3ee;"><i data-lucide="users"></i></div>
+        <div class="mini-stat-data">
+          <strong class="mono-font">1,247</strong>
+          <span>Total Students</span>
+        </div>
+      </div>
+      <div class="mini-stat">
+        <div class="mini-stat-icon" style="background:rgba(16,185,129,0.15); color:#34d399;"><i data-lucide="check-circle"></i></div>
+        <div class="mini-stat-data">
+          <strong class="mono-font">87.3%</strong>
+          <span>Avg. Attendance</span>
+        </div>
+      </div>
+      <div class="mini-stat">
+        <div class="mini-stat-icon" style="background:rgba(139,92,246,0.15); color:#a78bfa;"><i data-lucide="star"></i></div>
+        <div class="mini-stat-data">
+          <strong class="mono-font">7.94</strong>
+          <span>Average CGPA</span>
+        </div>
+      </div>
+      <div class="mini-stat">
+        <div class="mini-stat-icon" style="background:rgba(249,115,22,0.15); color:#fb923c;"><i data-lucide="trophy"></i></div>
+        <div class="mini-stat-data">
+          <strong class="mono-font">342</strong>
+          <span>Placed This Year</span>
+        </div>
+      </div>
+      <div class="mini-stat">
+        <div class="mini-stat-icon" style="background:rgba(244,63,94,0.15); color:#fb7185;"><i data-lucide="book-open"></i></div>
+        <div class="mini-stat-data">
+          <strong class="mono-font">96</strong>
+          <span>Backlogs Active</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STUDENT TABLE -->
+    <div class="table-section reveal">
+      <div class="table-wrap">
+        <div class="table-header-row">
+          <h3><i data-lucide="table"></i> All Student Records</h3>
+          <span id="record-count">Showing records</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table id="student-table">
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>PRN / Roll No.</th>
+                <th>Branch</th>
+                <th>Year</th>
+                <th>Attendance</th>
+                <th>CGPA</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="student-tbody">
+              <!-- Rows injected by JS -->
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <button class="page-btn active" id="page-1">1</button>
+          <button class="page-btn" id="page-2">2</button>
+          <button class="page-btn" id="page-3">3</button>
+          <button class="page-btn"><i data-lucide="chevron-right"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE CARDS -->
+    <div class="profile-section">
+      <h3 class="profile-section-title reveal"><i data-lucide="medal"></i> Top Performers</h3>
+      <div class="profile-list">
+        <div class="profile-row reveal">
+          <div class="profile-ava" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));">AR</div>
+          <div class="profile-info">
+            <h4>Arnav</h4>
+            <div class="roll mono-font">24070521223</div>
+            <div class="profile-tags"><span class="badge badge-blue">CSE</span>
+            <span class="badge badge-teal">1st Year</span>
+            <span class="badge badge-green">Gold</span></div>
+          </div>
+          <div class="profile-stats">
+            <div class="pstat"><strong class="mono-font">9.7</strong><span>CGPA</span></div>
+            <div class="pstat"><strong class="mono-font">98%</strong><span>Attend.</span></div>
+            <div class="pstat"><strong class="mono-font">5</strong><span>Awards</span></div>
+          </div>
+        </div>
+
+        <div class="profile-row reveal">
+          <div class="profile-ava" style="background:linear-gradient(135deg,var(--accent),#6d28d9);">PR</div>
+          <div class="profile-info">
+            <h4>Priya Raut</h4>
+            <div class="roll mono-font">SIT/AI/2022/012</div>
+            <div class="profile-tags"><span class="badge badge-teal">AI/ML</span>
+            <span class="badge badge-teal">4th Year</span>
+            <span class="badge badge-green">Silver</span></div>
+          </div>
+          <div class="profile-stats">
+            <div class="pstat"><strong class="mono-font">9.5</strong><span>CGPA</span></div>
+            <div class="pstat"><strong class="mono-font">95%</strong><span>Attend.</span></div>
+            <div class="pstat"><strong class="mono-font">3</strong><span>Awards</span></div>
+          </div>
+        </div>
+
+        <div class="profile-row reveal">
+          <div class="profile-ava" style="background:linear-gradient(135deg,var(--gold),#d97706);">RK</div>
+          <div class="profile-info">
+            <h4>Rahul Kamble</h4>
+            <div class="roll mono-font">SIT/CSE/2023/031</div>
+            <div class="profile-tags"><span class="badge badge-blue">CSE</span>
+            <span class="badge badge-orange">3rd Year</span>
+            <span class="badge badge-green">Bronze</span></div>
+          </div>
+          <div class="profile-stats">
+            <div class="pstat"><strong class="mono-font">9.2</strong><span>CGPA</span></div>
+            <div class="pstat"><strong class="mono-font">91%</strong><span>Attend.</span></div>
+            <div class="pstat"><strong class="mono-font">2</strong><span>Awards</span></div>
+          </div>
+        </div>
+
+        <div class="profile-row reveal">
+          <div class="profile-ava" style="background:linear-gradient(135deg,var(--secondary),#be123c);">SN</div>
+          <div class="profile-info">
+            <h4>Sanvi Naik</h4>
+            <div class="roll mono-font">SIT/IT/2023/044</div>
+            <div class="profile-tags"><span class="badge badge-orange">IT</span>
+            <span class="badge badge-orange">3rd Year</span></div>
+          </div>
+          <div class="profile-stats">
+            <div class="pstat"><strong class="mono-font">9.0</strong><span>CGPA</span></div>
+            <div class="pstat"><strong class="mono-font">93%</strong><span>Attend.</span></div>
+            <div class="pstat"><strong class="mono-font">1</strong><span>Awards</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTICES -->
+    <div class="notices-section">
+      <h3 class="profile-section-title reveal"><i data-lucide="bell"></i> Important Notices</h3>
+      <div class="notices-list">
+        <div class="notice-card reveal">
+          <div class="notice-content">
+            <div class="notice-head"><span class="tag badge badge-blue">Academic</span></div>
+            <h4>End Semester Examination Schedule — Nov 2026</h4>
+            <p>The end-semester examination timetable for all programmes has been released. Students are advised to check their hall tickets on the portal.</p>
+          </div>
+          <div class="notice-date-container">
+            <div class="notice-date"><i data-lucide="calendar"></i> 05 Jul 2026</div>
+          </div>
+        </div>
+
+        <div class="notice-card urgent reveal">
+          <div class="notice-content">
+            <div class="notice-head"><span class="tag badge badge-red">Urgent</span></div>
+            <h4>Last Date for Fee Payment — 15 July 2026</h4>
+            <p>All students with pending dues are requested to clear their fees before 15th July to avoid de-barring from examinations.</p>
+          </div>
+          <div class="notice-date-container">
+            <div class="notice-date"><i data-lucide="calendar"></i> 01 Jul 2026</div>
+          </div>
+        </div>
+
+        <div class="notice-card success reveal">
+          <div class="notice-content">
+            <div class="notice-head"><span class="tag badge badge-green">Placement</span></div>
+            <h4>TCS &amp; Infosys Campus Drive — 20 July 2026</h4>
+            <p>Eligible final year students may register for the upcoming campus placement drive by TCS and Infosys. Registration closes on 12th July.</p>
+          </div>
+          <div class="notice-date-container">
+            <div class="notice-date"><i data-lucide="calendar"></i> 28 Jun 2026</div>
+          </div>
+        </div>
+
+        <div class="notice-card info reveal">
+          <div class="notice-content">
+            <div class="notice-head"><span class="tag badge badge-teal">Event</span></div>
+            <h4>TechFest 2026 — Annual National Technical Fest</h4>
+            <p>SIT TechFest 2026 is scheduled for 25–27 July. Students can participate in hackathons, robotics, paper presentations, and more.</p>
+          </div>
+          <div class="notice-date-container">
+            <div class="notice-date"><i data-lucide="calendar"></i> 25 Jun 2026</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STUDENT FOOTER -->
+    <footer class="student-footer">
+      <p>&copy; 2026 SIT Nagpur &mdash; Student Information Portal</p>
+      <div class="footer-links">
+        <a href="#" onclick="switchView('department'); return false;"><i data-lucide="arrow-left"></i> Back to Department</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Support</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- =========================================================
+       6. UNIFIED JAVASCRIPT
+       ========================================================= -->
+  <script>
+    // ===============================================
+    // SPA ROUTING LOGIC
+    // ===============================================
+    function switchView(view) {
+      if (view === 'students') {
+        document.getElementById('view-department').style.display = 'none';
+        document.getElementById('view-students').style.display = 'block';
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        document.getElementById('nav-student-btn').classList.add('active');
+      } else {
+        document.getElementById('view-department').style.display = 'block';
+        document.getElementById('view-students').style.display = 'none';
+        document.getElementById('nav-student-btn').classList.remove('active');
+      }
+      window.scrollTo(0, 0);
+    }
+
+    function goToSection(sectionId) {
+      switchView('department'); // Ensure we are on the department view
+      setTimeout(() => {
+        const target = document.querySelector(sectionId);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 50);
+    }
+
+    // ============================================================
+    // STUDENT DATA
+    // ============================================================
+    const students = [
+      { name:'Arnav',          roll:'24070521223',    branch:'CSE',   year:'1st', attend:98, cgpa:9.7, status:'Active'  },
+      { name:'Priya Raut',     roll:'SIT/AI/22/012',  branch:'AI/ML', year:'4th', attend:95, cgpa:9.5, status:'Active'  },
+      { name:'Rahul Kamble',   roll:'SIT/CSE/23/031', branch:'CSE',   year:'3rd', attend:91, cgpa:9.2, status:'Active'  },
+      { name:'Sanvi Naik',     roll:'SIT/IT/23/044',  branch:'IT',    year:'3rd', attend:93, cgpa:9.0, status:'Active'  },
+      { name:'Karan Deshmukh', roll:'SIT/CY/24/008',  branch:'Cyber', year:'2nd', attend:85, cgpa:8.4, status:'Active'  },
+      { name:'Neha Joshi',     roll:'SIT/CSE/24/019', branch:'CSE',   year:'2nd', attend:78, cgpa:7.8, status:'Backlog' },
+      { name:'Rohit Sharma',   roll:'SIT/AI/25/003',  branch:'AI/ML', year:'1st', attend:88, cgpa:8.0, status:'Active'  },
+      { name:'Pooja Wankhede', roll:'SIT/IT/22/055',  branch:'IT',    year:'4th', attend:72, cgpa:7.1, status:'Backlog' },
+      { name:'Arjun Patil',    roll:'SIT/CSE/23/062', branch:'CSE',   year:'3rd', attend:96, cgpa:8.8, status:'Active'  },
+      { name:'Divya Bhatt',    roll:'SIT/CY/24/017',  branch:'Cyber', year:'2nd', attend:90, cgpa:8.5, status:'Active'  },
+      { name:'Siddharth Rao',  roll:'SIT/AI/22/028',  branch:'AI/ML', year:'4th', attend:82, cgpa:8.2, status:'Active'  },
+      { name:'Meera Kulkarni', roll:'SIT/IT/25/011',  branch:'IT',    year:'1st', attend:94, cgpa:8.9, status:'Active'  },
+    ];
+
+    const branchColors = {
+      CSE:   'badge-blue',
+      'AI/ML':'badge-teal',
+      IT:    'badge-orange',
+      Cyber: 'badge-red',
+    };
+
+    const avatarColors = [
+      'linear-gradient(135deg,#06b6d4,#0891b2)',
+      'linear-gradient(135deg,#8b5cf6,#6d28d9)',
+      'linear-gradient(135deg,#f43f5e,#be123c)',
+      'linear-gradient(135deg,#fbbf24,#b45309)',
+      'linear-gradient(135deg,#10b981,#047857)',
+    ];
+
+    function initials(name) {
+      return name.split(' ').map(w => w[0]).join('').toUpperCase();
+    }
+
+    // ============================================================
+    // RENDER TABLE
+    // ============================================================
+    function renderTable(data) {
+      const tbody = document.getElementById('student-tbody');
+      document.getElementById('record-count').textContent = 'Showing ' + data.length + ' records';
+      tbody.innerHTML = '';
+
+      data.forEach((s, i) => {
+        const color = avatarColors[i % avatarColors.length];
+        const attend = s.attend;
+        const attendColor = attend >= 90 ? '#34d399' : attend >= 75 ? '#fbbf24' : '#fb7185';
+        const statusClass = s.status === 'Active' ? 'badge-green' : 'badge-red';
+
+        const tr = document.createElement('tr');
+        tr.classList.add('student-row');
+        tr.dataset.branch = s.branch;
+        tr.dataset.year   = s.year;
+
+        tr.innerHTML = `
+          <td>
+            <span class="student-avatar" style="background:${color};">${initials(s.name)}</span>
+            <span class="student-name">${s.name}</span>
+          </td>
+          <td><span class="student-id mono-font">${s.roll}</span></td>
+          <td><span class="badge ${branchColors[s.branch] || 'badge-blue'}">${s.branch}</span></td>
+          <td>${s.year}</td>
+          <td>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div class="progress-bar-wrap">
+                <div class="progress-bar" style="width:${attend}%; background:linear-gradient(90deg,${attendColor},${attendColor}cc);"></div>
+              </div>
+              <span class="mono-font" style="color:${attendColor}; font-weight:700; font-size:0.85rem;">${attend}%</span>
+            </div>
+          </td>
+          <td><span class="cgpa-val mono-font">${s.cgpa.toFixed(1)}</span></td>
+          <td><span class="badge ${statusClass}">${s.status}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    renderTable(students);
+
+    // ============================================================
+    // SEARCH & FILTER
+    // ============================================================
+    function applyFilters() {
+      const searchVal  = document.getElementById('student-search').value.toLowerCase();
+      const branchVal  = document.getElementById('branch-filter').value;
+      const yearVal    = document.getElementById('year-filter').value;
+
+      const filtered = students.filter(s => {
+        const matchSearch = s.name.toLowerCase().includes(searchVal) ||
+                            s.roll.toLowerCase().includes(searchVal) ||
+                            s.branch.toLowerCase().includes(searchVal);
+        const matchBranch = !branchVal || s.branch === branchVal;
+        const matchYear   = !yearVal   || s.year === yearVal;
+        return matchSearch && matchBranch && matchYear;
+      });
+
+      renderTable(filtered);
+    }
+
+    document.getElementById('student-search').addEventListener('input', applyFilters);
+    document.getElementById('branch-filter').addEventListener('change', applyFilters);
+    document.getElementById('year-filter').addEventListener('change', applyFilters);
+
+    // ===============================================
+    // Scroll Reveal Animation
+    // ===============================================
+    const revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+    document.querySelectorAll('.reveal').forEach((el) => revealObserver.observe(el));
+
+    // ===============================================
+    // Active Nav on Scroll
+    // ===============================================
+    const navItems = document.querySelectorAll('.nav-item');
+    const navObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && document.getElementById('view-department').style.display !== 'none') {
+            navItems.forEach((link) => {
+              link.classList.remove('active');
+              if (link.getAttribute('onclick') && link.getAttribute('onclick').includes(entry.target.id)) {
+                link.classList.add('active');
+              }
+            });
+          }
+        });
+      },
+      { threshold: 0.4 }
+    );
+    document.querySelectorAll('section[id]').forEach((sec) => navObserver.observe(sec));
+
+    // ============================================================
+    // PAGINATION (UI only)
+    // ============================================================
+    document.querySelectorAll('.page-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.page-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+  </script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
