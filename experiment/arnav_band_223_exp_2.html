@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exp 2: Smart Invoice Terminal</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono&display=swap');
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f1f5f9;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #0f172a;
+        }
+
+        .checkout-container {
+            display: flex;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+            overflow: hidden;
+            width: 100%;
+            max-width: 900px;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Left Side: Form */
+        .form-section {
+            flex: 1.2;
+            padding: 40px;
+        }
+
+        .form-section h2 {
+            margin: 0 0 5px 0;
+            font-size: 1.6em;
+            color: #0f172a;
+        }
+
+        .form-section p {
+            color: #64748b;
+            font-size: 0.9em;
+            margin-bottom: 30px;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .input-field {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8em;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #475569;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 0.95em;
+            font-family: inherit;
+            box-sizing: border-box;
+            transition: all 0.2s;
+            background: #f8fafc;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+
+        .btn-generate {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-generate:hover {
+            background: #4338ca;
+            transform: translateY(-2px);
+        }
+
+        /* Right Side: Live Receipt Preview */
+        .receipt-section {
+            flex: 1;
+            background: #0f172a;
+            color: #f8fafc;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .receipt-header h3 {
+            margin: 0;
+            font-size: 1.2em;
+            font-family: 'Space Mono', monospace;
+            color: #818cf8;
+            letter-spacing: 1px;
+        }
+
+        .receipt-header p {
+            color: #64748b;
+            font-size: 0.8em;
+            margin: 5px 0 0 0;
+            font-family: 'Space Mono', monospace;
+        }
+
+        .invoice-body {
+            background: #1e293b;
+            border: 1px dashed #334155;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85em;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .placeholder-text {
+            text-align: center;
+            color: #475569;
+            font-style: italic;
+        }
+
+        .invoice-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            color: #cbd5e1;
+        }
+
+        .invoice-divider {
+            border-top: 1px dashed #475569;
+            margin: 15px 0;
+        }
+
+        .invoice-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #38bdf8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="checkout-container">
+        <!-- Left Column: Input Form -->
+        <div class="form-section">
+            <h2>Invoice Terminal</h2>
+            <p>Enter order items to compute GST and generate a receipt.</p>
+            
+            <div class="input-field" style="margin-bottom: 20px;">
+                <label>Customer Name</label>
+                <input type="text" id="cName" placeholder="e.g., Arnav Band">
+            </div>
+
+            <div class="input-field" style="margin-bottom: 20px;">
+                <label>Product Description</label>
+                <input type="text" id="pName" placeholder="e.g., Gaming Mouse">
+            </div>
+
+            <div class="input-row">
+                <div class="input-field">
+                    <label>Quantity</label>
+                    <input type="number" id="qty" placeholder="0" min="1">
+                </div>
+                <div class="input-field">
+                    <label>Unit Price (₹)</label>
+                    <input type="number" id="price" placeholder="0.00" min="1">
+                </div>
+            </div>
+
+            <button class="btn-generate" onclick="generateInvoice()">Compute & Issue Invoice</button>
+        </div>
+
+        <!-- Right Column: Live Receipt -->
+        <div class="receipt-section">
+            <div class="receipt-header">
+                <h3>// INVOICE_PREVIEW</h3>
+                <p>STATUS: AWAITING_CALCULATION</p>
+            </div>
+
+            <div class="invoice-body" id="invoiceDisplay">
+                <div class="placeholder-text">
+                    Fill out the form and click generate to view the invoice summary.
+                </div>
+            </div>
+
+            <div style="font-size: 0.75em; color: #475569; font-family: 'Space Mono', monospace; text-align: center;">
+                SYSTEM: ES6 DESTRUCTURING ENGINE ACTIVE
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function generateInvoice() {
+            const GST_RATE = 0.18;
+
+            let customerName = document.getElementById("cName").value;
+            let productName = document.getElementById("pName").value;
+            let quantity = Number(document.getElementById("qty").value);
+            let price = Number(document.getElementById("price").value);
+
+            if (!customerName || !productName || quantity <= 0 || price <= 0) {
+                alert("Please provide valid inputs for all fields.");
+                return;
+            }
+
+            let total = quantity * price;
+            let gstAmount = total * GST_RATE;
+            let finalBill = total + gstAmount;
+
+            // JS Object logic
+            const bill = {
+                customer: customerName,
+                product: productName,
+                quantity,
+                price,
+                total,
+                gstAmount,
+                finalBill
+            };
+
+            // ES6 Object Destructuring logic
+            const {
+                customer,
+                product,
+                quantity: qtyVal,
+                price: priceVal,
+                gstAmount: gst,
+                finalBill: amount
+            } = bill;
+
+            // DOM Manipulation
+            const invoiceHTML = `
+                <div class="invoice-row"><span>CLIENT:</span> <strong>${customer}</strong></div>
+                <div class="invoice-row"><span>ITEM:</span> <span>${product}</span></div>
+                <div class="invoice-row"><span>QTY & PRICE:</span> <span>${qtyVal} x ₹${priceVal.toFixed(2)}</span></div>
+                <div class="invoice-divider"></div>
+                <div class="invoice-row"><span>SUBTOTAL:</span> <span>₹${total.toFixed(2)}</span></div>
+                <div class="invoice-row"><span>GST (18%):</span> <span>₹${gst.toFixed(2)}</span></div>
+                <div class="invoice-divider"></div>
+                <div class="invoice-total"><span>TOTAL:</span> <span>₹${amount.toFixed(2)}</span></div>
+            `;
+
+            document.getElementById("invoiceDisplay").innerHTML = invoiceHTML;
+        }
+    </script>
+
+</body>
+</html>

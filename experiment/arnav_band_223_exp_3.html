@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exp 3: Academic Analytics Portal</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .portal-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .portal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 20px;
+        }
+
+        .portal-header h1 {
+            margin: 0;
+            font-size: 1.8em;
+            color: #0f172a;
+        }
+
+        .portal-header span {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        /* Top KPI Metric Cards */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+            text-align: center;
+        }
+
+        .metric-label {
+            font-size: 0.8em;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .metric-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        /* Form Area */
+        .panel {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.03);
+        }
+
+        .panel h3 {
+            margin: 0 0 20px 0;
+            font-size: 1.1em;
+            color: #334155;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 0.8em;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 6px;
+        }
+
+        .field input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-family: inherit;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        .field input:focus {
+            border-color: #0284c7;
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+        }
+
+        .btn-action {
+            background: #0284c7;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-action:hover {
+            background: #0369a1;
+        }
+
+        /* Analytics Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px;
+            font-size: 0.8em;
+            text-transform: uppercase;
+            color: #64748b;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.95em;
+        }
+
+        .status-pill {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .pill-pass {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .pill-fail {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        #analyticsPanel {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="portal-container">
+        <div class="portal-header">
+            <h1>Academic Analytics Portal</h1>
+            <span>EXP_03 :: CONTROL STRUCTURES</span>
+        </div>
+
+        <!-- Metric KPI Cards -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">Total Score</div>
+                <div class="metric-value" id="kpiTotal">--/500</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Percentage</div>
+                <div class="metric-value" id="kpiPerc">0.0%</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Grade Assigned</div>
+                <div class="metric-value" id="kpiGrade" style="color: #0284c7;">--</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Final Status</div>
+                <div class="metric-value" id="kpiStatus">--</div>
+            </div>
+        </div>
+
+        <!-- Input Form -->
+        <div class="panel">
+            <h3>Enter Student Evaluation Data</h3>
+            
+            <div class="input-grid" style="grid-template-columns: 2fr 1fr; margin-bottom: 15px;">
+                <div class="field">
+                    <label>Student Name</label>
+                    <input type="text" id="sName" placeholder="e.g. Arnav band">
+                </div>
+                <div class="field">
+                    <label>Roll Number</label>
+                    <input type="text" id="rNo" placeholder="e.g. 223">
+                </div>
+            </div>
+
+            <div class="input-grid">
+                <div class="field">
+                    <label>Maths</label>
+                    <input type="number" class="sub-mark" min="0" max="100">
+                </div>
+                <div class="field">
+                    <label>JavaScript</label>
+                    <input type="number" class="sub-mark" min="0" max="100">
+                </div>
+                <div class="field">
+                    <label>Python</label>
+                    <input type="number" class="sub-mark" min="0" max="100">
+                </div>
+                <div class="field">
+                    <label>Physics</label>
+                    <input type="number" class="sub-mark" min="0" max="100">
+                </div>
+                <div class="field">
+                    <label>C Language</label>
+                    <input type="number" class="sub-mark" min="0" max="100">
+                </div>
+            </div>
+
+            <button class="btn-action" onclick="runAnalytics()">Compute Evaluation</button>
+        </div>
+
+        <!-- Analytical Breakdown Table -->
+        <div class="panel" id="analyticsPanel">
+            <h3>Subject Performance Breakdown</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Subject Name</th>
+                        <th>Marks Obtained</th>
+                        <th>Max Marks</th>
+                        <th>Evaluation Status</th>
+                    </tr>
+                </thead>
+                <tbody id="breakdownBody">
+                    <!-- Dynamic Rows -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function runAnalytics() {
+            const name = document.getElementById('sName').value;
+            const roll = document.getElementById('rNo').value;
+            const inputs = document.querySelectorAll('.sub-mark');
+            const subjects = ['Maths', 'JavaScript', 'Python', 'Physics', 'C Language'];
+            
+            // Concept: if-else (Form Validation)
+            if (!name.trim() || !roll.trim()) {
+                alert("Please input both Student Name and Roll Number.");
+                return;
+            }
+
+            let total = 0;
+            let hasFailed = false;
+            let marks = [];
+
+            // Concept: for loop (Scoping & Validation)
+            for (let i = 0; i < inputs.length; i++) {
+                let val = Number(inputs[i].value);
+                if (inputs[i].value === "" || val < 0 || val > 100) {
+                    alert(`Invalid mark entry for ${subjects[i]}. Must be between 0 and 100.`);
+                    return;
+                }
+                marks.push(val);
+                total += val;
+                if (val < 35) hasFailed = true;
+            }
+
+            let percentage = (total / 500) * 100;
+            let grade = "";
+
+            // Concept: switch statement (Grading Logic)
+            switch (true) {
+                case (percentage >= 90): grade = "O (Outst.)"; break;
+                case (percentage >= 80): grade = "A+"; break;
+                case (percentage >= 70): grade = "A"; break;
+                case (percentage >= 60): grade = "B+"; break;
+                case (percentage >= 50): grade = "B"; break;
+                case (percentage >= 35): grade = "C"; break;
+                default: grade = "F"; break;
+            }
+
+            if (hasFailed) grade = "F (Backlog)";
+            let finalStatus = hasFailed ? "FAIL" : "PASS";
+
+            // Concept: while loop (Counting Distinctions)
+            let distinctions = 0;
+            let idx = 0;
+            while (idx < marks.length) {
+                if (marks[idx] >= 75) distinctions++;
+                idx++;
+            }
+            console.log(`[SYSTEM LOG]: Student achieved distinction in ${distinctions} subject(s).`);
+
+            // DOM Update: KPI Cards
+            document.getElementById('kpiTotal').innerText = `${total}/500`;
+            document.getElementById('kpiPerc').innerText = `${percentage.toFixed(1)}%`;
+            document.getElementById('kpiGrade').innerText = grade;
+            
+            const statusCard = document.getElementById('kpiStatus');
+            statusCard.innerText = finalStatus;
+            statusCard.style.color = hasFailed ? "#ef4444" : "#16a34a";
+
+            // DOM Update: Table Rows
+            let tableHTML = "";
+            for (let i = 0; i < subjects.length; i++) {
+                let isPass = marks[i] >= 35;
+                tableHTML += `
+                    <tr>
+                        <td style="font-weight: 600;">${subjects[i]}</td>
+                        <td>${marks[i]}</td>
+                        <td>100</td>
+                        <td><span class="status-pill ${isPass ? 'pill-pass' : 'pill-fail'}">${isPass ? 'PASS' : 'FAIL'}</span></td>
+                    </tr>
+                `;
+            }
+            document.getElementById('breakdownBody').innerHTML = tableHTML;
+            document.getElementById('analyticsPanel').style.display = 'block';
+        }
+    </script>
+
+</body>
+</html>

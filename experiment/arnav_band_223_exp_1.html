@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exp 1: Web Integration Portal</title>
+    
+    <!-- [1] EXTERNAL CSS LINK -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- [2] INTERNAL CSS -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;600;700&display=swap');
+
+        body {
+            background-color: #0f172a; /* Deep Slate Tech Background */
+            font-family: 'Inter', sans-serif;
+            color: #f8fafc;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid #1e293b;
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tech-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .tech-card:hover {
+            transform: translateY(-5px);
+            border-color: #38bdf8;
+            box-shadow: 0 10px 30px -10px rgba(56, 189, 248, 0.2);
+        }
+
+        .method-badge {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75em;
+            background: #0f172a;
+            color: #38bdf8;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid #0369a1;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.2em;
+            color: #f1f5f9;
+        }
+
+        p {
+            color: #94a3b8;
+            font-size: 0.9em;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .btn-tech {
+            background: #38bdf8;
+            color: #0f172a;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s ease;
+            margin-bottom: 10px;
+        }
+
+        .btn-tech:hover {
+            background: #7dd3fc;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+        }
+
+        .btn-alt {
+            background: transparent;
+            color: #38bdf8;
+            border: 1px solid #38bdf8;
+        }
+
+        .btn-alt:hover {
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        .console-box {
+            background: #0b0f19;
+            border: 1px dashed #475569;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85em;
+            color: #10b981;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <!-- [3] INLINE CSS: Directly applied via style attribute -->
+        <h1 style="letter-spacing: -1px;">Experiment No. 01</h1>
+        <p style="color: #64748b; font-family: 'Fira Code', monospace;">// CSS & JS Integration Architecture</p>
+    </div>
+
+    <div class="grid-container">
+        <!-- METHOD 1 -->
+        <div class="tech-card">
+            <div class="section-tag method-badge">METHOD_01 :: INLINE</div>
+            <h3>Inline Architecture</h3>
+            <p>Styles and scripts embedded directly inside the HTML element attributes for localized, priority execution.</p>
+            
+            <button class="btn-tech" onclick="alert('⚡ Inline JS Triggered Successfully!')">
+                Execute Inline Script
+            </button>
+        </div>
+
+        <!-- METHOD 2 -->
+        <div class="tech-card">
+            <div class="section-tag method-badge">METHOD_02 :: INTERNAL</div>
+            <h3>Internal DOM & Console</h3>
+            <p>Page-specific styles in head section. Scripts execute dynamic DOM insertion and backend console logs.</p>
+            
+            <button class="btn-tech" onclick="showUserInfo()">Render Student Data</button>
+            <button class="btn-tech btn-alt" onclick="triggerConsoleDemo()">Trigger Console Debug</button>
+            
+            <div id="userInfoBox" class="console-box"></div>
+        </div>
+
+        <!-- METHOD 3 -->
+        <div class="tech-card external-card-style">
+            <div class="section-tag method-badge">METHOD_03 :: EXTERNAL</div>
+            <h3>External Modular Files</h3>
+            <p>Production-grade separation of concerns using independent .css stylesheets and .js logic files.</p>
+            
+            <button class="btn-tech" onclick="showWelcomeMessage()">Fetch External Response</button>
+            
+            <div id="welcomeBox" class="console-box" style="color: #38bdf8;"></div>
+        </div>
+    </div>
+
+    <!-- INTERNAL JAVASCRIPT -->
+    <script>
+        function showUserInfo() {
+            const infoBox = document.getElementById('userInfoBox');
+            infoBox.innerHTML = `
+                <span style="color:#64748b;">// STUDENT_META_DATA</span><br>
+                > NAME: Arnav Band<br>
+                > PRN : 223<br>
+                > DEPT: Computer Science & Engineering<br>
+                > STATUS: <span style="color:#38bdf8;">ACTIVE_ENROLLMENT</span>
+            `;
+            infoBox.style.display = 'block';
+        }
+
+        function triggerConsoleDemo() {
+            console.log("%c[LOG] System initialization started.", "color: #38bdf8; font-weight:bold;");
+            console.info("[INFO] Modular DOM elements mounted successfully.");
+            console.warn("[WARN] Memory usage optimal. Debug mode enabled.");
+            console.error("[ERROR] Simulated error loop for testing inspection methods.");
+            alert("🛠️ Console diagnostics executed! Open DevTools (F12) -> Console tab to inspect.");
+        }
+    </script>
+
+    <!-- [4] EXTERNAL JAVASCRIPT LINK -->
+    <script src="script.js"></script>
+
+</body>
+</html>
