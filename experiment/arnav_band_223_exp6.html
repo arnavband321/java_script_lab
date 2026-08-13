@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Unified 3-in-1 Interactive demonstration of JavaScript String functions and Regular Expressions.">
+    <title>3-in-1 Text Analyzer | Strings & Regex</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ============================================================
+           Unified 3-in-1 Practical  —  Dark Developer CSS
+           ============================================================ */
+
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --border: #30363d;
+            --border-strong: #8b949e;
+            --text: #c9d1d9;
+            --text-muted: #8b949e;
+            --text-dim: #6e7681;
+            
+            --accent: #39ff14; /* Neon Green */
+            --accent-glow: rgba(57, 255, 20, 0.15);
+            --cyan: #58a6ff;
+            --cyan-glow: rgba(88, 166, 255, 0.25);
+            --purple: #bc8cff;
+            --red: #ff7b72;
+            
+            --font: 'Ubuntu', -apple-system, sans-serif;
+            --mono: 'Fira Code', monospace;
+            --radius: 12px; 
+            --radius-sm: 6px;
+            --shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+            --ease: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Ambient Orbs */
+        .bg-canvas {
+            position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none;
+            background: radial-gradient(circle at 50% 0%, #161b22 0%, #0d1117 70%);
+        }
+        .orb {
+            position: absolute; border-radius: 50%; filter: blur(140px); opacity: 0.12;
+        }
+        .orb-a {
+            width: 600px; height: 600px; background: radial-gradient(circle, var(--accent), transparent 70%);
+            top: -150px; left: -100px; animation: drift 20s ease-in-out infinite alternate;
+        }
+        .orb-b {
+            width: 500px; height: 500px; background: radial-gradient(circle, var(--cyan), transparent 70%);
+            bottom: -150px; right: -100px; animation: drift 25s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes drift {
+            0%   { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, -40px) scale(1.1); }
+        }
+
+        /* Page Layout */
+        .page-wrapper { max-width: 900px; margin: 0 auto; padding: 3rem 1.25rem 4rem; }
+        
+        .page-header { text-align: center; margin-bottom: 3.5rem; }
+        .chip {
+            display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px;
+            background: rgba(88, 166, 255, 0.05); border: 1px solid rgba(88, 166, 255, 0.3);
+            border-radius: 20px; font-size: 0.85rem; font-weight: 700; color: var(--cyan);
+            margin-bottom: 1.5rem; letter-spacing: 0.05em; text-transform: uppercase;
+        }
+        .dot {
+            width: 8px; height: 8px; background: var(--cyan); border-radius: 50%;
+            box-shadow: 0 0 10px var(--cyan); animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%      { opacity: 0.4; transform: scale(0.8); }
+        }
+        .page-header h1 {
+            font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 700; color: #ffffff;
+            margin-bottom: 0.75rem; text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+        .lead { color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+
+        /* Unified Card */
+        .section-card {
+            background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 2.25rem; margin-bottom: 2.5rem; box-shadow: var(--shadow);
+            backdrop-filter: blur(10px); transition: border-color 0.3s var(--ease);
+        }
+        .section-card:hover { border-color: var(--border-strong); }
+        
+        /* Inputs & Buttons */
+        .input-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 0.75rem; }
+        .header-row { display: flex; justify-content: space-between; align-items: flex-end; }
+        label { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: var(--text-dim); letter-spacing: 0.05em; }
+
+        textarea {
+            width: 100%; padding: 16px; background: #0d1117; border: 1px solid var(--border);
+            border-radius: var(--radius-sm); color: var(--text); font-family: var(--mono); font-size: 0.95rem;
+            transition: all 0.2s var(--ease); box-shadow: inset 0 2px 6px rgba(0,0,0,0.3);
+            resize: vertical; min-height: 180px; margin-bottom: 1rem;
+        }
+        textarea:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15); }
+
+        .action-row {
+            display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 15px; margin-bottom: 1.5rem;
+        }
+
+        .run-btn {
+            padding: 14px 32px; font-size: 1rem; background: var(--cyan);
+            border: none; color: #000; border-radius: var(--radius-sm); font-weight: 700;
+            cursor: pointer; box-shadow: 0 4px 15px var(--cyan-glow); transition: all 0.2s var(--ease);
+        }
+        .run-btn:hover { background: #79c0ff; box-shadow: 0 8px 25px var(--cyan-glow); transform: translateY(-2px); }
+
+        /* Real-time Stats Grid */
+        .stats-grid { display: flex; gap: 12px; flex-wrap: wrap; }
+        .stat-card {
+            background: #21262d; border: 1px solid var(--border); border-radius: var(--radius-sm);
+            padding: 10px 18px; text-align: center; flex: 1; min-width: 120px;
+        }
+        .stat-value { font-family: var(--mono); font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+        .stat-label { font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.05em; }
+
+        /* Output Box */
+        .output-box {
+            padding: 20px; background: #000; border: 1px solid var(--border);
+            border-radius: var(--radius-sm); font-family: var(--mono); font-size: 0.9rem;
+            color: var(--text); min-height: 120px; white-space: pre-wrap; word-break: break-all;
+        }
+        .output-header { display: flex; align-items: center; gap: 8px; margin-bottom: 15px; border-bottom: 1px solid #30363d; padding-bottom: 10px; }
+        .console-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .console-dot.red { background: #ff5f56; } .console-dot.yellow { background: #ffbd2e; } .console-dot.green { background: #27c93f; }
+        
+        .highlight-green { color: var(--accent); }
+        .highlight-cyan { color: var(--cyan); }
+        .highlight-purple { color: var(--purple); }
+        .highlight-red { color: var(--red); }
+        
+        .placeholder-text { color: var(--text-dim); }
+        .result-text { color: var(--text); }
+    </style>
+</head>
+<body>
+
+    <div class="bg-canvas">
+        <div class="orb orb-a"></div>
+        <div class="orb orb-b"></div>
+    </div>
+
+    <div class="page-wrapper">
+        <header class="page-header">
+            <div class="chip"><span class="dot"></span> 3-in-1 Unified Tool</div>
+            <h1 id="page-title">Super Text Analyzer</h1>
+            <p class="lead">Live text analysis, robust data extraction, and structural email validation all in one dashboard.</p>
+        </header>
+
+        <section class="section-card">
+            <div class="input-group">
+                <div class="header-row">
+                    <label for="unified-input">Input Data (Auto-converts to lowercase)</label>
+                </div>
+                <!-- Default text is also provided in lowercase to match functionality -->
+                <textarea id="unified-input">hello! please verify the following contact details.
+you can reach our lead dev at john.doe@code-workspace.com or hit up the generic inbox at contact@domain.org.
+don't send mail to invalid@domain or missing-at-sign.com.
+for phone support, call 1-800-555-0199 or our direct line 555.867.5309. 
+thanks!</textarea>
+            </div>
+            
+            <div class="action-row">
+                <button class="run-btn" id="btn-process">Extract & Validate Data</button>
+                
+                <!-- Real-time Text Analysis Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-words">0</div>
+                        <div class="stat-label">Words</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-chars">0</div>
+                        <div class="stat-label">Chars</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-spaces">0</div>
+                        <div class="stat-label">No Spaces</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Output Console -->
+            <div class="output-box" id="unified-output">
+                <div class="output-header">
+                    <span class="console-dot red"></span><span class="console-dot yellow"></span><span class="console-dot green"></span>
+                    <span style="color: var(--text-muted); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.05em;">~/dev/extraction-results</span>
+                </div>
+                <div id="output-content" class="placeholder-text">// CLICK "EXTRACT & VALIDATE DATA" TO SEE RESULTS HERE...</div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // DOM Elements
+        const textInput = document.getElementById('unified-input');
+        const statWords = document.getElementById('stat-words');
+        const statChars = document.getElementById('stat-chars');
+        const statSpaces = document.getElementById('stat-spaces');
+        const btnProcess = document.getElementById('btn-process');
+        const outputContent = document.getElementById('output-content');
+
+        // ==========================================
+        // 1. Text Analysis & Lowercase enforcement
+        // ==========================================
+        function handleInput() {
+            // Preserve cursor position so jumping doesn't happen during typing
+            const start = textInput.selectionStart;
+            const end = textInput.selectionEnd;
+            
+            // Force text to lowercase using .toLowerCase()
+            textInput.value = textInput.value.toLowerCase();
+            
+            // Restore cursor position
+            textInput.setSelectionRange(start, end);
+
+            // Run stats
+            updateStats();
+        }
+
+        function updateStats() {
+            const text = textInput.value;
+            
+            // Chars total
+            statChars.textContent = text.length;
+            
+            // Chars without spaces
+            statSpaces.textContent = text.replace(/\s+/g, '').length;
+            
+            // Word count
+            const trimmedText = text.trim();
+            if (trimmedText === '') {
+                statWords.textContent = '0';
+            } else {
+                statWords.textContent = trimmedText.split(/\s+/).length;
+            }
+        }
+
+        // Bind input handler
+        textInput.addEventListener('input', handleInput);
+        
+        // Initial force format and stats load
+        handleInput();
+
+        // ==========================================
+        // 2 & 3. Data Extraction & Validation
+        // ==========================================
+        btnProcess.addEventListener('click', () => {
+            outputContent.className = 'result-text';
+            
+            const text = textInput.value;
+            
+            // Regex for lowercase extraction (input is already forced to lowercase)
+            const extractEmailRegex = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/g;
+            const phoneRegex = /\b(?:\d[ -.]?)?\(?\d{3}\)?[-.]?\d{3}[-.]?\d{4}\b/g;
+            const strictValidateRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            const foundEmails = text.match(extractEmailRegex) || [];
+            const foundPhones = text.match(phoneRegex) || [];
+
+            let htmlOutput = ``;
+
+            // Process Phones (Forced to Uppercase)
+            htmlOutput += `<span class="highlight-cyan">► PHONE NUMBERS EXTRACTED (${foundPhones.length}):</span>\n`;
+            if (foundPhones.length > 0) {
+                foundPhones.forEach(phone => htmlOutput += `  ├─ ${phone.toUpperCase()}\n`);
+            } else {
+                htmlOutput += `  └─ (NONE FOUND)\n`;
+            }
+            htmlOutput += `\n`;
+
+            // Process Emails & Validate them (Forced to Uppercase)
+            htmlOutput += `<span class="highlight-purple">► EMAIL ADDRESSES EXTRACTED & VALIDATED (${foundEmails.length}):</span>\n`;
+            if (foundEmails.length > 0) {
+                const uniqueEmails = [...new Set(foundEmails)];
+                
+                uniqueEmails.forEach(email => {
+                    const isValid = strictValidateRegex.test(email);
+                    // Use .toUpperCase() here to enforce the output rule
+                    if(isValid) {
+                        htmlOutput += `  ├─ [ <span class="highlight-green">VALID</span> ] ${email.toUpperCase()}\n`;
+                    } else {
+                        htmlOutput += `  ├─ [ <span class="highlight-red">INVALID</span> ] ${email.toUpperCase()}\n`;
+                    }
+                });
+            } else {
+                htmlOutput += `  └─ (NONE FOUND)\n`;
+            }
+
+            // Output to virtual console
+            outputContent.innerHTML = htmlOutput;
+        });
+    </script>
+</body>
+</html>
