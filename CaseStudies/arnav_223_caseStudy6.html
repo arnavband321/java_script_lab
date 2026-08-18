@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>JavaScript Case Study</title>
+<style>
+    /* Modern, Common Design Variables */
+    :root {
+        --primary-color: #0d6efd;
+        --primary-hover: #0b5ed7;
+        --bg-color: #f8f9fa;
+        --card-bg: #ffffff;
+        --text-main: #212529;
+        --text-muted: #6c757d;
+        --border-color: #dee2e6;
+        --success-color: #198754;
+        --error-color: #dc3545;
+        --font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: var(--font-family);
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        line-height: 1.6;
+        padding: 40px 20px;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    h1 {
+        font-weight: 600;
+        color: var(--text-main);
+        margin-bottom: 10px;
+    }
+
+    p.subtitle {
+        color: var(--text-muted);
+    }
+
+    /* Card Styling for Sections */
+    section {
+        background-color: var(--card-bg);
+        padding: 25px 30px;
+        margin-bottom: 30px;
+        border-radius: 10px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    section:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    h2 {
+        font-size: 1.25rem;
+        color: var(--primary-color);
+        margin-bottom: 20px;
+        border-bottom: 2px solid var(--bg-color);
+        padding-bottom: 10px;
+    }
+
+    /* Form Elements */
+    label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 5px;
+        color: var(--text-main);
+    }
+
+    input[type="text"], 
+    input[type="email"], 
+    textarea {
+        width: 100%;
+        padding: 10px 15px;
+        margin-bottom: 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        font-family: inherit;
+        font-size: 1rem;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    input:focus, 
+    textarea:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+    }
+
+    button {
+        background-color: var(--primary-color);
+        color: white;
+        font-weight: 500;
+        padding: 10px 20px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    button:hover {
+        background-color: var(--primary-hover);
+    }
+
+    /* Result Output Styling */
+    .result-box {
+        margin-top: 15px;
+        padding: 12px 15px;
+        border-radius: 6px;
+        background-color: var(--bg-color);
+        border-left: 4px solid var(--primary-color);
+        font-weight: 500;
+        display: none; /* Hidden until triggered */
+    }
+
+    .result-box.active {
+        display: block;
+    }
+
+    .result-box.success {
+        border-left-color: var(--success-color);
+        background-color: #d1e7dd;
+        color: #0f5132;
+    }
+
+    .result-box.error {
+        border-left-color: var(--error-color);
+        background-color: #f8d7da;
+        color: #842029;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>JavaScript Case Study</h1>
+        <p class="subtitle">String Operations & Event Handling</p>
+    </header>
+
+    <!-- Section for reversing a string -->
+    <section>
+        <h2>1. Reverse a String</h2>
+        <label for="reverseInput">Enter text to reverse:</label>
+        <input type="text" id="reverseInput" placeholder="e.g., Hello World" />
+        <button onclick="reverseString()">Reverse String</button>
+        <div id="reverseResult" class="result-box"></div>
+    </section>
+
+    <!-- Section for counting vowels -->
+    <section>
+        <h2>2. Count Vowels in Paragraph</h2>
+        <label for="paragraph">Enter paragraph text:</label>
+        <textarea id="paragraph" rows="4" placeholder="Type a sentence or paragraph here..."></textarea>
+        <button onclick="countVowels()">Count Vowels</button>
+        <div id="vowelCount" class="result-box"></div>
+    </section>
+
+    <!-- Form for demonstrating event handling and validation -->
+    <section>
+        <h2>3. Form Event Handling & Validation</h2>
+        <form id="sampleForm">
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" name="name" placeholder="John Doe" />
+            
+            <label for="email">Email Address:</label>
+            <input type="email" id="email" name="email" placeholder="john@example.com" />
+            
+            <button type="submit">Submit Form</button>
+        </form>
+        <div id="formMessage" class="result-box"></div>
+    </section>
+</div>
+
+<script>
+    // --- 1. String Operation: Reverse String ---
+    function reverseString() {
+        const input = document.getElementById('reverseInput').value;
+        const resultBox = document.getElementById('reverseResult');
+        
+        if (input.trim() === '') {
+            resultBox.innerText = 'Please enter a string to reverse.';
+            resultBox.className = 'result-box active error';
+            return;
+        }
+
+        const reversed = input.split('').reverse().join('');
+        resultBox.innerText = 'Reversed: ' + reversed;
+        resultBox.className = 'result-box active';
+    }
+
+    // --- 2. String Operation: Count Vowels ---
+    function countVowels() {
+        const paragraph = document.getElementById('paragraph').value.toLowerCase();
+        const resultBox = document.getElementById('vowelCount');
+        
+        if (paragraph.trim() === '') {
+            resultBox.innerText = 'Please enter some text to analyze.';
+            resultBox.className = 'result-box active error';
+            return;
+        }
+
+        const vowels = 'aeiou';
+        let count = 0;
+        for (let char of paragraph) {
+            if (vowels.includes(char)) {
+                count++;
+            }
+        }
+        
+        resultBox.innerText = `Found ${count} vowel(s) in the text.`;
+        resultBox.className = 'result-box active';
+    }
+    
+    // --- 3. Event Handling & Validation ---
+    const form = document.getElementById('sampleForm');
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const formMessage = document.getElementById('formMessage');
+
+    // Focus Event Demonstration
+    nameInput.addEventListener('focus', function() {
+        console.log("Name field is focused.");
+    });
+
+    // Change Event Demonstration
+    emailInput.addEventListener('change', function() {
+        console.log("Email value changed to: " + this.value);
+    });
+
+    // Submit Event & Validation
+    form.addEventListener('submit', function(event) {
+        // Prevent default submission
+        event.preventDefault(); 
+        
+        const name = nameInput.value.trim();
+        const email = emailInput.value.trim();
+        
+        // Validate Empty Fields
+        if (name === '' || email === '') {
+            formMessage.innerText = 'Error: Both Name and Email fields are required.';
+            formMessage.className = 'result-box active error';
+            return;
+        }
+
+        // Validate Email Format (Basic Regex)
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email)) {
+            formMessage.innerText = 'Error: Please enter a valid email address.';
+            formMessage.className = 'result-box active error';
+            return;
+        }
+
+        // Success State
+        formMessage.innerText = `Success! Thank you, ${name}. Your email (${email}) has been validated and received.`;
+        formMessage.className = 'result-box active success';
+        
+        // Optional: Clear form after successful submit
+        form.reset();
+    });
+</script>
+
+</body>
+</html>
