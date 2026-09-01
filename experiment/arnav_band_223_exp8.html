@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apex Fitness - Gym Admission Form</title>
+  <style>
+    :root {
+      --primary: #e63946;
+      --primary-hover: #c92a37;
+      --bg: #0f1016;
+      --card-bg: #1a1b23;
+      --text: #f1faee;
+      --text-muted: #8d99ae;
+      --success: #2ec4b6;
+      --error: #ff4d6d;
+      --border: #2b2c37;
+      --accent: #457b9d;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2.5rem 1rem;
+    }
+
+    .form-container {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 650px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+    }
+
+    .form-header {
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .form-header h1 {
+      font-size: 1.85rem;
+      color: #fff;
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.5px;
+    }
+
+    .form-header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .section-title {
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4rem;
+      margin: 1.5rem 0 1rem 0;
+    }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+      position: relative;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: #edf2f4;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      background: #121318;
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus, select:focus {
+      border-color: #5a6275;
+    }
+
+    .form-group.success input,
+    .form-group.success select {
+      border-color: var(--success);
+    }
+
+    .form-group.error input,
+    .form-group.error select {
+      border-color: var(--error);
+    }
+
+    .error-msg {
+      font-size: 0.75rem;
+      color: var(--error);
+      margin-top: 0.35rem;
+      display: none;
+    }
+
+    .form-group.error .error-msg {
+      display: block;
+    }
+
+    .row {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .row .form-group {
+      flex: 1;
+    }
+
+    .bmi-card {
+      background: #121318;
+      border: 1.5px dashed var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.2rem;
+    }
+
+    .bmi-card span {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .bmi-badge {
+      font-size: 0.95rem;
+      font-weight: 700;
+      padding: 0.35rem 0.85rem;
+      border-radius: 4px;
+      background: var(--border);
+      color: var(--text-muted);
+      border: 1px solid transparent;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .terms-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .terms-group input {
+      width: auto;
+      margin-top: 0.25rem;
+      cursor: pointer;
+    }
+
+    .terms-group label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: normal;
+      cursor: pointer;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 0.9rem;
+      background: var(--primary);
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      margin-top: 1.5rem;
+      transition: background 0.2s;
+    }
+
+    button[type="submit"]:hover {
+      background: var(--primary-hover);
+    }
+
+    .banner {
+      display: none;
+      background-color: rgba(46, 196, 182, 0.15);
+      border: 1px solid var(--success);
+      color: var(--success);
+      padding: 0.75rem;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 0.9rem;
+      margin-bottom: 1.25rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-container">
+    <div class="form-header">
+      <h1>Apex Gym Admission</h1>
+      <p>Register your profile, calculate health stats, and pick your plan</p>
+    </div>
+
+    <div id="successBanner" class="banner">
+      Registration complete! Welcome to Apex Gym.
+    </div>
+
+    <form id="admissionForm" novalidate>
+      <div class="section-title">1. Personal Info</div>
+      
+      <div class="form-group" id="nameGroup">
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName" placeholder="e.g. Alex Morgan" />
+        <small class="error-msg">Please enter at least 3 letters.</small>
+      </div>
+
+      <div class="row">
+        <div class="form-group" id="emailGroup">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="alex@example.com" />
+          <small class="error-msg">Valid email required.</small>
+        </div>
+        <div class="form-group" id="phoneGroup">
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" placeholder="10-digit number" />
+          <small class="error-msg">Must be 10 digits.</small>
+        </div>
+      </div>
+
+      <div class="section-title">2. Physical Stats & BMI</div>
+
+      <div class="row">
+        <div class="form-group" id="heightGroup">
+          <label for="height">Height (cm)</label>
+          <input type="number" id="height" placeholder="e.g. 175" min="100" max="250" />
+          <small class="error-msg">Enter height (100–250 cm).</small>
+        </div>
+        <div class="form-group" id="weightGroup">
+          <label for="weight">Weight (kg)</label>
+          <input type="number" id="weight" placeholder="e.g. 70" min="30" max="250" />
+          <small class="error-msg">Enter weight (30–250 kg).</small>
+        </div>
+      </div>
+
+      <div class="bmi-card">
+        <div>
+          <span>Calculated Live BMI:</span>
+          <div id="bmiText" style="font-weight: 600; color: #fff; margin-top: 2px;">--</div>
+        </div>
+        <div id="bmiBadge" class="bmi-badge">Awaiting Data</div>
+      </div>
+
+      <div class="section-title">3. Membership & Preferences</div>
+
+      <div class="row">
+        <div class="form-group" id="goalGroup">
+          <label for="fitnessGoal">Primary Goal</label>
+          <select id="fitnessGoal">
+            <option value="">Select Primary Goal</option>
+            <option value="weight_loss">Weight Loss</option>
+            <option value="muscle_gain">Muscle Building</option>
+            <option value="endurance">Cardio & Endurance</option>
+            <option value="flexibility">Flexibility & Core</option>
+          </select>
+          <small class="error-msg">Please select a primary goal.</small>
+        </div>
+
+        <div class="form-group" id="slotGroup">
+          <label for="timeSlot">Preferred Time Slot</label>
+          <select id="timeSlot">
+            <option value="">Select Time Slot</option>
+            <option value="morning">Morning (06:00 AM – 10:00 AM)</option>
+            <option value="afternoon">Afternoon (12:00 PM – 04:00 PM)</option>
+            <option value="evening">Evening (05:00 PM – 10:00 PM)</option>
+          </select>
+          <small class="error-msg">Select a time slot.</small>
+        </div>
+      </div>
+
+      <div class="form-group" id="planGroup">
+        <label for="plan">Membership Plan</label>
+        <select id="plan">
+          <option value="">Select a membership plan</option>
+          <option value="monthly">Monthly Basic ($49 / mo)</option>
+          <option value="quarterly">Quarterly Pro ($129 / 3 mos)</option>
+          <option value="annual">Annual Elite ($449 / yr)</option>
+        </select>
+        <small class="error-msg">Please select a plan.</small>
+      </div>
+
+      <div class="section-title">4. Safety & Emergency Contact</div>
+
+      <div class="row">
+        <div class="form-group" id="emergencyNameGroup">
+          <label for="emergencyName">Contact Name</label>
+          <input type="text" id="emergencyName" placeholder="e.g. Jane Morgan" />
+          <small class="error-msg">Enter contact's name.</small>
+        </div>
+        <div class="form-group" id="emergencyPhoneGroup">
+          <label for="emergencyPhone">Emergency Phone</label>
+          <input type="tel" id="emergencyPhone" placeholder="10-digit number" />
+          <small class="error-msg">10-digit number required.</small>
+        </div>
+      </div>
+
+      <div class="terms-group">
+        <input type="checkbox" id="terms" />
+        <label for="terms">I accept the gym terms, liability release, and rules of conduct.</label>
+      </div>
+      <div class="form-group" id="termsGroup">
+        <small class="error-msg" style="margin-top: 0.2rem;">You must accept the terms.</small>
+      </div>
+
+      <button type="submit">Complete Registration</button>
+    </form>
+  </div>
+
+  <script>
+    // 1. Element Selectors
+    const form = document.getElementById('admissionForm');
+    const fullName = document.getElementById('fullName');
+    const email = document.getElementById('email');
+    const phone = document.getElementById('phone');
+    const height = document.getElementById('height');
+    const weight = document.getElementById('weight');
+    const fitnessGoal = document.getElementById('fitnessGoal');
+    const timeSlot = document.getElementById('timeSlot');
+    const plan = document.getElementById('plan');
+    const emergencyName = document.getElementById('emergencyName');
+    const emergencyPhone = document.getElementById('emergencyPhone');
+    const terms = document.getElementById('terms');
+
+    const bmiText = document.getElementById('bmiText');
+    const bmiBadge = document.getElementById('bmiBadge');
+    const successBanner = document.getElementById('successBanner');
+
+    // 2. Visual State Helper Functions
+    function setSuccess(element) {
+      const group = element.closest('.form-group');
+      if (group) {
+        group.classList.remove('error');
+        group.classList.add('success');
+      }
+    }
+
+    function setError(element) {
+      const group = element.closest('.form-group');
+      if (group) {
+        group.classList.remove('success');
+        group.classList.add('error');
+      }
+    }
+
+    // 3. BMI Live Calculator Logic
+    function calculateBMI() {
+      const hVal = parseFloat(height.value);
+      const wVal = parseFloat(weight.value);
+
+      if (!isNaN(hVal) && !isNaN(wVal) && hVal >= 100 && hVal <= 250 && wVal >= 30 && wVal <= 250) {
+        const heightInMeters = hVal / 100;
+        const bmi = (wVal / (heightInMeters * heightInMeters)).toFixed(1);
+
+        let category = '';
+        let badgeColor = '';
+
+        if (bmi < 18.5) {
+          category = 'Underweight';
+          badgeColor = '#e9c46a';
+        } else if (bmi <= 24.9) {
+          category = 'Normal Weight';
+          badgeColor = '#2ec4b6';
+        } else if (bmi <= 29.9) {
+          category = 'Overweight';
+          badgeColor = '#f4a261';
+        } else {
+          category = 'Obese';
+          badgeColor = '#ff4d6d';
+        }
+
+        bmiText.textContent = `${bmi} kg/m²`;
+        bmiBadge.textContent = category;
+        bmiBadge.style.color = badgeColor;
+        bmiBadge.style.borderColor = badgeColor;
+        bmiBadge.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+      } else {
+        bmiText.textContent = '--';
+        bmiBadge.textContent = 'Awaiting Data';
+        bmiBadge.style.color = 'var(--text-muted)';
+        bmiBadge.style.borderColor = 'transparent';
+        bmiBadge.style.backgroundColor = 'var(--border)';
+      }
+    }
+
+    // 4. Field Validation Functions
+    function validateName() {
+      const ok = /^[A-Za-z\s]{3,}$/.test(fullName.value.trim());
+      ok ? setSuccess(fullName) : setError(fullName);
+      return ok;
+    }
+
+    function validateEmail() {
+      const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
+      ok ? setSuccess(email) : setError(email);
+      return ok;
+    }
+
+    function validatePhone() {
+      const ok = /^\d{10}$/.test(phone.value.trim());
+      ok ? setSuccess(phone) : setError(phone);
+      return ok;
+    }
+
+    function validateHeight() {
+      const val = parseFloat(height.value);
+      const ok = !isNaN(val) && val >= 100 && val <= 250;
+      ok ? setSuccess(height) : setError(height);
+      return ok;
+    }
+
+    function validateWeight() {
+      const val = parseFloat(weight.value);
+      const ok = !isNaN(val) && val >= 30 && val <= 250;
+      ok ? setSuccess(weight) : setError(weight);
+      return ok;
+    }
+
+    function validateGoal() {
+      const ok = fitnessGoal.value !== '';
+      ok ? setSuccess(fitnessGoal) : setError(fitnessGoal);
+      return ok;
+    }
+
+    function validateSlot() {
+      const ok = timeSlot.value !== '';
+      ok ? setSuccess(timeSlot) : setError(timeSlot);
+      return ok;
+    }
+
+    function validatePlan() {
+      const ok = plan.value !== '';
+      ok ? setSuccess(plan) : setError(plan);
+      return ok;
+    }
+
+    function validateEmergencyName() {
+      const ok = /^[A-Za-z\s]{2,}$/.test(emergencyName.value.trim());
+      ok ? setSuccess(emergencyName) : setError(emergencyName);
+      return ok;
+    }
+
+    function validateEmergencyPhone() {
+      const primaryPhoneVal = phone.value.trim();
+      const emergencyPhoneVal = emergencyPhone.value.trim();
+      const ok = /^\d{10}$/.test(emergencyPhoneVal) && emergencyPhoneVal !== primaryPhoneVal;
+      ok ? setSuccess(emergencyPhone) : setError(emergencyPhone);
+      return ok;
+    }
+
+    function validateTerms() {
+      const termsGroup = document.getElementById('termsGroup');
+      if (terms.checked) {
+        termsGroup.classList.remove('error');
+        return true;
+      } else {
+        termsGroup.classList.add('error');
+        return false;
+      }
+    }
+
+    // 5. Attach Live Event Listeners
+    fullName.addEventListener('input', validateName);
+    email.addEventListener('input', validateEmail);
+    phone.addEventListener('input', validatePhone);
+    emergencyName.addEventListener('input', validateEmergencyName);
+    emergencyPhone.addEventListener('input', validateEmergencyPhone);
+
+    // Height & Weight Listeners (Validation + BMI calculation)
+    ['input', 'change', 'keyup'].forEach((event) => {
+      height.addEventListener(event, () => {
+        validateHeight();
+        calculateBMI();
+      });
+      weight.addEventListener(event, () => {
+        validateWeight();
+        calculateBMI();
+      });
+    });
+
+    fitnessGoal.addEventListener('change', validateGoal);
+    timeSlot.addEventListener('change', validateSlot);
+    plan.addEventListener('change', validatePlan);
+    terms.addEventListener('change', validateTerms);
+
+    // 6. Form Submission
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const isValid = [
+        validateName(),
+        validateEmail(),
+        validatePhone(),
+        validateHeight(),
+        validateWeight(),
+        validateGoal(),
+        validateSlot(),
+        validatePlan(),
+        validateEmergencyName(),
+        validateEmergencyPhone(),
+        validateTerms()
+      ].every(Boolean);
+
+      if (isValid) {
+        successBanner.style.display = 'block';
+        form.reset();
+        calculateBMI();
+
+        document.querySelectorAll('.form-group').forEach(group => {
+          group.classList.remove('success');
+        });
+
+        setTimeout(() => {
+          successBanner.style.display = 'none';
+        }, 5000);
+      }
+    });
+  </script>
+</body>
+</html>
