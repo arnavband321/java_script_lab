@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Handling Case Study</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #eef2f6;
+            color: #333333;
+            padding: 40px 20px;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .form-container {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 520px;
+            padding: 32px 28px;
+            margin: 0 auto;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+        }
+
+        .mandatory-note {
+            color: #dc2626;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            width: 130px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #475569;
+            flex-shrink: 0;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="password"] {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 6px;
+            outline: none;
+            font-size: 0.9rem;
+            color: #1e293b;
+            transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+        }
+
+        .form-group input:focus, 
+        .form-group select:focus {
+            border-color: #2563eb;
+            background-color: #f8fafc;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .dob-selects {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .dob-selects select {
+            flex: 1;
+            padding: 8px 10px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background-color: #ffffff;
+            color: #334155;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .required-star {
+            color: #dc2626;
+            margin-left: 8px;
+            font-weight: 700;
+            width: 10px;
+        }
+
+        .terms-group {
+            margin-left: 130px;
+            margin-top: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            font-size: 0.88rem;
+            color: #475569;
+        }
+
+        .terms-group input {
+            margin: 0 10px 0 0;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #2563eb;
+        }
+
+        .terms-group label {
+            cursor: pointer;
+        }
+
+        .btn-group {
+            margin-left: 130px;
+        }
+
+        input[type="submit"] {
+            background-color: #2563eb;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 22px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #1d4ed8;
+        }
+
+        input[type="submit"]:active {
+            transform: scale(0.98);
+        }
+
+        .error-message {
+            color: #dc2626;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-left: 130px;
+            margin-top: -12px;
+            margin-bottom: 14px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <div class="mandatory-note">* Mandatory to fill</div>
+        
+        <form id="registrationForm" novalidate>
+            <!-- Firstname -->
+            <div class="form-group">
+                <label for="firstname">Firstname:</label>
+                <input type="text" id="firstname">
+                <span class="required-star">*</span>
+            </div>
+            
+            <!-- Lastname -->
+            <div class="form-group">
+                <label for="lastname">Lastname:</label>
+                <input type="text" id="lastname">
+                <span class="required-star">*</span>
+            </div>
+            
+            <!-- Birthday -->
+            <div class="form-group">
+                <label>Birthday:</label>
+                <div class="dob-selects">
+                    <select id="dobDay">
+                        <option value="">Day</option>
+                    </select>
+                    <select id="dobMonth">
+                        <option value="">Month</option>
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                    <select id="dobYear">
+                        <option value="">Year</option>
+                    </select>
+                </div>
+                <span class="required-star">*</span>
+            </div>
+            
+            <!-- Username -->
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username">
+                <span class="required-star">*</span>
+            </div>
+            
+            <!-- E-mail -->
+            <div class="form-group">
+                <label for="email">E-mail:</label>
+                <input type="text" id="email">
+                <span class="required-star">*</span>
+            </div>
+            <div class="error-message" id="emailError">Please enter a valid email address.</div>
+            
+            <!-- Website -->
+            <div class="form-group">
+                <label for="website">Website:</label>
+                <input type="text" id="website">
+                <span class="required-star">*</span>
+            </div>
+            
+            <!-- Password -->
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password">
+                <span class="required-star">*</span>
+            </div>
+            
+            <!-- Re-password -->
+            <div class="form-group">
+                <label for="repassword">Re-password:</label>
+                <input type="password" id="repassword">
+                <span class="required-star">*</span>
+            </div>
+            <div class="error-message" id="passwordError">Passwords do not match!</div>
+            
+            <!-- Terms Checkbox -->
+            <div class="terms-group">
+                <input type="checkbox" id="terms">
+                <label for="terms">I agree to the terms & conditions.</label>
+            </div>
+            
+            <!-- Submit Button -->
+            <div class="btn-group">
+                <input type="submit" value="Sign up">
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // --- Populate Dropdowns ---
+        const daySelect = document.getElementById('dobDay');
+        const yearSelect = document.getElementById('dobYear');
+
+        for (let i = 1; i <= 31; i++) {
+            let opt = document.createElement('option');
+            opt.value = i;
+            opt.innerHTML = i;
+            daySelect.appendChild(opt);
+        }
+
+        const currentYear = new Date().getFullYear();
+        for (let i = currentYear; i >= currentYear - 100; i--) {
+            let opt = document.createElement('option');
+            opt.value = i;
+            opt.innerHTML = i;
+            yearSelect.appendChild(opt);
+        }
+
+        // --- Form Event Listeners & Validation ---
+        const form = document.getElementById('registrationForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const repasswordInput = document.getElementById('repassword');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+
+        repasswordInput.addEventListener('input', function() {
+            if (passwordInput.value && repasswordInput.value !== passwordInput.value) {
+                passwordError.style.display = 'block';
+            } else {
+                passwordError.style.display = 'none';
+            }
+        });
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            let hasError = false;
+            
+            const mandatoryFields = [
+                document.getElementById('firstname'),
+                document.getElementById('lastname'),
+                document.getElementById('username'),
+                emailInput,
+                document.getElementById('website'),
+                passwordInput,
+                repasswordInput,
+                daySelect,
+                document.getElementById('dobMonth'),
+                yearSelect
+            ];
+
+            let emptyFound = false;
+            mandatoryFields.forEach(field => {
+                if (field.value.trim() === "") {
+                    emptyFound = true;
+                    field.style.borderColor = "#dc2626";
+                } else {
+                    field.style.borderColor = "#cbd5e1";
+                }
+            });
+
+            if (emptyFound) {
+                alert("Please fill out all mandatory fields highlighted in red.");
+                hasError = true;
+            }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (emailInput.value.trim() !== "" && !emailRegex.test(emailInput.value)) {
+                emailError.style.display = 'block';
+                emailInput.style.borderColor = "#dc2626";
+                hasError = true;
+            } else {
+                emailError.style.display = 'none';
+            }
+
+            if (passwordInput.value !== repasswordInput.value) {
+                passwordError.style.display = 'block';
+                repasswordInput.style.borderColor = "#dc2626";
+                hasError = true;
+            } else {
+                passwordError.style.display = 'none';
+            }
+
+            const termsCheckbox = document.getElementById('terms');
+            if (!termsCheckbox.checked) {
+                alert("You must agree to the terms and conditions to sign up.");
+                hasError = true;
+            }
+
+            if (!hasError) {
+                alert("Form submitted successfully!");
+                form.reset();
+                mandatoryFields.forEach(field => field.style.borderColor = "#cbd5e1");
+            }
+        });
+    </script>
+</body>
+</html>
