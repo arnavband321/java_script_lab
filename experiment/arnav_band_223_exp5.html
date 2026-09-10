@@ -24,6 +24,134 @@
             align-items: flex-start;
             min-height: 100vh;
             padding: 40px 20px;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        /* ─── Dark Theme Overrides ─── */
+        body.dark-theme {
+            background: #0f172a;
+            color: #f8fafc;
+        }
+
+        body.dark-theme .container {
+            background: #1e293b;
+            border-color: #334155;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        body.dark-theme .form-row input,
+        body.dark-theme .form-row select,
+        body.dark-theme .discount-row input {
+            background: #0f172a;
+            border-color: #334155;
+            color: #f8fafc;
+        }
+
+        body.dark-theme .form-row input:focus,
+        body.dark-theme .form-row select:focus,
+        body.dark-theme .discount-row input:focus {
+            border-color: #38bdf8;
+        }
+
+        body.dark-theme button#add-btn {
+            background: #38bdf8;
+            color: #0f172a;
+        }
+
+        body.dark-theme button#add-btn:hover {
+            background: #7dd3fc;
+        }
+
+        body.dark-theme thead th {
+            color: #94a3b8;
+            border-bottom-color: #334155;
+        }
+
+        body.dark-theme tbody td {
+            border-bottom-color: #334155;
+            color: #f1f5f9;
+        }
+
+        body.dark-theme tbody tr:hover {
+            background: #243044;
+        }
+
+        body.dark-theme .badge-general {
+            background: #334155;
+            color: #f1f5f9;
+        }
+
+        body.dark-theme .delete-btn:hover {
+            background: rgba(239, 68, 68, 0.15);
+        }
+
+        body.dark-theme .empty-msg {
+            color: #64748b;
+        }
+
+        body.dark-theme .summary {
+            background: #0f172a;
+            border-color: #334155;
+        }
+
+        body.dark-theme .summary-line {
+            color: #cbd5e1;
+        }
+
+        body.dark-theme .total-line {
+            border-top-color: #334155;
+            color: #f8fafc;
+        }
+
+        body.dark-theme .filter-label {
+            color: #94a3b8;
+        }
+
+        body.dark-theme .filter-btn {
+            background: #0f172a;
+            color: #cbd5e1;
+            border: 1px solid #334155;
+        }
+
+        body.dark-theme .filter-btn:hover {
+            background: #1e293b;
+        }
+
+        body.dark-theme .filter-btn.active {
+            background: #38bdf8;
+            color: #0f172a;
+            border-color: #38bdf8;
+        }
+
+        body.dark-theme .highlight {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: #b45309;
+            color: #fcd34d;
+        }
+
+        /* ─── Theme Toggle Button ─── */
+        .theme-toggle-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            background: #ffffff;
+            color: #111;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+        }
+
+        body.dark-theme .theme-toggle-btn {
+            background: #1e293b;
+            color: #38bdf8;
+            border-color: #334155;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
 
         .container {
@@ -319,6 +447,9 @@
 </head>
 
 <body>
+
+    <!-- THEME TOGGLE BUTTON -->
+    <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()">🌙 Dark Mode</button>
 
     <div class="container">
         <h2><i class="fa-solid fa-cart-shopping"></i> Cart Total Calculator</h2>
@@ -724,6 +855,32 @@
             div.appendChild(document.createTextNode(text));
             return div.innerHTML;
         }
+
+        // ─── Theme Switch Logic ───
+
+        function applyTheme(theme) {
+            const toggleBtn = document.getElementById('themeToggle');
+            if (theme === 'dark') {
+                document.body.classList.add('dark-theme');
+                toggleBtn.textContent = '☀️ Light Mode';
+            } else {
+                document.body.classList.remove('dark-theme');
+                toggleBtn.textContent = '🌙 Dark Mode';
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = document.body.classList.contains('dark-theme');
+            const newTheme = isDark ? 'light' : 'dark';
+            localStorage.setItem('exp5_theme', newTheme);
+            applyTheme(newTheme);
+        }
+
+        // Restore saved theme on load
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('exp5_theme') || 'light';
+            applyTheme(savedTheme);
+        });
     </script>
 </body>
 

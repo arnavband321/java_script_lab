@@ -18,6 +18,70 @@
       --accent: #457b9d;
     }
 
+    /* Light Theme Variables & Overrides */
+    body.light-theme {
+      --bg: #f4f6f9;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #cbd5e1;
+      --accent: #0284c7;
+    }
+
+    body.light-theme .form-container {
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+    }
+
+    body.light-theme .form-header h1 {
+      color: #0f172a;
+    }
+
+    body.light-theme label {
+      color: #334155;
+    }
+
+    body.light-theme input,
+    body.light-theme select {
+      background: #f8fafc;
+      color: var(--text);
+      border-color: var(--border);
+    }
+
+    body.light-theme input:focus,
+    body.light-theme select:focus {
+      border-color: #64748b;
+    }
+
+    body.light-theme .bmi-card {
+      background: #f8fafc;
+    }
+
+    body.light-theme #bmiText {
+      color: #0f172a !important;
+    }
+
+    /* Theme Toggle Button */
+    .theme-toggle-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: var(--card-bg);
+      color: var(--text);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+    }
+
+    body.light-theme .theme-toggle-btn {
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -33,6 +97,7 @@
       align-items: center;
       min-height: 100vh;
       padding: 2.5rem 1rem;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     .form-container {
@@ -212,6 +277,9 @@
   </style>
 </head>
 <body>
+
+  <!-- THEME TOGGLE BUTTON -->
+  <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()">☀️ Light Mode</button>
 
   <div class="form-container">
     <div class="form-header">
@@ -540,6 +608,31 @@
           successBanner.style.display = 'none';
         }, 5000);
       }
+    });
+
+    // 7. Theme Switch Logic
+    function applyTheme(theme) {
+      const toggleBtn = document.getElementById('themeToggle');
+      if (theme === 'light') {
+        document.body.classList.add('light-theme');
+        toggleBtn.textContent = '🌙 Dark Mode';
+      } else {
+        document.body.classList.remove('light-theme');
+        toggleBtn.textContent = '☀️ Light Mode';
+      }
+    }
+
+    function toggleTheme() {
+      const isLight = document.body.classList.contains('light-theme');
+      const newTheme = isLight ? 'dark' : 'light';
+      localStorage.setItem('exp8_theme', newTheme);
+      applyTheme(newTheme);
+    }
+
+    // Restore saved theme on load
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = localStorage.getItem('exp8_theme') || 'dark';
+      applyTheme(savedTheme);
     });
   </script>
 </body>

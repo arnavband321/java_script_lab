@@ -20,6 +20,83 @@
       --success: #10b981;
     }
 
+    /* Dark Theme CSS Variables */
+    body.dark-theme {
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+    }
+
+    body.dark-theme .input-section select {
+      background: #0f172a;
+      border-color: var(--border);
+      color: var(--text);
+    }
+
+    body.dark-theme .input-section input[type="text"] {
+      background: #0f172a;
+      border-color: var(--border);
+      color: var(--text);
+    }
+
+    body.dark-theme .input-section button {
+      background-color: var(--primary);
+      color: #0f172a;
+    }
+
+    body.dark-theme .input-section button:hover {
+      background-color: var(--primary-hover);
+    }
+
+    body.dark-theme .filter-btn.active {
+      background-color: rgba(56, 189, 248, 0.15);
+      color: var(--primary);
+    }
+
+    body.dark-theme .task-item {
+      background-color: #0f172a;
+      border-color: var(--border);
+    }
+
+    body.dark-theme .priority-High { background: #450a0a; color: #fca5a5; }
+    body.dark-theme .priority-Medium { background: #451a03; color: #fcd34d; }
+    body.dark-theme .priority-Low { background: #052e16; color: #86efac; }
+
+    body.dark-theme .inline-edit-input {
+      background: #1e293b;
+      color: var(--text);
+      border-color: var(--primary);
+    }
+
+    /* Theme Toggle Button */
+    .theme-toggle-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: #ffffff;
+      color: #1e293b;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      z-index: 1000;
+    }
+
+    body.dark-theme .theme-toggle-btn {
+      background: #1e293b;
+      color: #38bdf8;
+      border-color: #334155;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -34,6 +111,7 @@
       justify-content: center;
       padding: 40px 16px;
       min-height: 100vh;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     .container {
@@ -238,6 +316,9 @@
 </head>
 <body>
 
+  <!-- THEME TOGGLE BUTTON -->
+  <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()">🌙 Dark Mode</button>
+
   <div class="container">
     <h1>To-Do List</h1>
 
@@ -404,6 +485,29 @@
     });
 
     addBtn.addEventListener('click', addTask);
+
+    // THEME SWITCH LOGIC
+    function applyTheme(theme) {
+      const toggleBtn = document.getElementById('themeToggle');
+      if (theme === 'dark') {
+        document.body.classList.add('dark-theme');
+        toggleBtn.textContent = '☀️ Light Mode';
+      } else {
+        document.body.classList.remove('dark-theme');
+        toggleBtn.textContent = '🌙 Dark Mode';
+      }
+    }
+
+    function toggleTheme() {
+      const isDark = document.body.classList.contains('dark-theme');
+      const newTheme = isDark ? 'light' : 'dark';
+      localStorage.setItem('exp7_theme', newTheme);
+      applyTheme(newTheme);
+    }
+
+    // Restore saved theme on load
+    const savedTheme = localStorage.getItem('exp7_theme') || 'light';
+    applyTheme(savedTheme);
 
     // Initial render
     renderTasks();

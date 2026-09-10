@@ -17,6 +17,72 @@
             align-items: center;
             min-height: 100vh;
             color: #0f172a;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Dark Theme Overrides */
+        body.dark-theme {
+            background-color: #0b0f19;
+            color: #f8fafc;
+        }
+
+        body.dark-theme .checkout-container {
+            background: #1e293b;
+            border-color: #334155;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        body.dark-theme .form-section h2 {
+            color: #f8fafc;
+        }
+
+        body.dark-theme .form-section p {
+            color: #94a3b8;
+        }
+
+        body.dark-theme label {
+            color: #cbd5e1;
+        }
+
+        body.dark-theme input {
+            background: #0f172a;
+            border-color: #334155;
+            color: #f8fafc;
+        }
+
+        body.dark-theme input:focus {
+            background: #1e293b;
+            border-color: #818cf8;
+        }
+
+        body.dark-theme .receipt-section {
+            background: #0b1120;
+            border-left: 1px solid #334155;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 8px 16px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85em;
+            background: #ffffff;
+            color: #0f172a;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            z-index: 1000;
+        }
+
+        body.dark-theme .theme-toggle-btn {
+            background: #1e293b;
+            color: #38bdf8;
+            border-color: #334155;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
         .checkout-container {
@@ -177,6 +243,9 @@
 </head>
 <body>
 
+    <!-- THEME TOGGLE BUTTON -->
+    <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()">🌙 Dark Mode</button>
+
     <div class="checkout-container">
         <!-- Left Column: Input Form -->
         <div class="form-section">
@@ -279,6 +348,31 @@
 
             document.getElementById("invoiceDisplay").innerHTML = invoiceHTML;
         }
+
+        // THEME SWITCH LOGIC
+        function applyTheme(theme) {
+            const toggleBtn = document.getElementById('themeToggle');
+            if (theme === 'dark') {
+                document.body.classList.add('dark-theme');
+                toggleBtn.textContent = '☀️ Light Mode';
+            } else {
+                document.body.classList.remove('dark-theme');
+                toggleBtn.textContent = '🌙 Dark Mode';
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = document.body.classList.contains('dark-theme');
+            const newTheme = isDark ? 'light' : 'dark';
+            localStorage.setItem('exp2_theme', newTheme);
+            applyTheme(newTheme);
+        }
+
+        // Restore saved theme on load
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('exp2_theme') || 'light';
+            applyTheme(savedTheme);
+        });
     </script>
 
 </body>

@@ -15,6 +15,85 @@
             --text-muted: #6B7280;
         }
 
+        /* Dark Theme CSS Variables */
+        body.dark-theme {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            --card-bg: rgba(30, 41, 59, 0.85);
+            --text-main: #F9FAFB;
+            --text-muted: #9CA3AF;
+        }
+
+        body.dark-theme .card {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        body.dark-theme input[type="text"] {
+            background: rgba(15, 23, 42, 0.8);
+            border-color: #374151;
+            color: #F9FAFB;
+        }
+
+        body.dark-theme .options-panel {
+            background: rgba(15, 23, 42, 0.6);
+            border-color: #374151;
+        }
+
+        body.dark-theme #clearBtn {
+            background-color: #374151;
+            color: #F9FAFB;
+        }
+
+        body.dark-theme #clearBtn:hover {
+            background-color: #4B5563;
+        }
+
+        body.dark-theme .neutral {
+            background: #1E293B;
+            color: #94A3B8;
+            border-color: #475569;
+        }
+
+        body.dark-theme .error {
+            background: #450A0A;
+            color: #FCA5A5;
+            border-color: #991B1B;
+        }
+
+        body.dark-theme .success {
+            background: #052E16;
+            color: #86EFAC;
+            border-color: #166534;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 8px 16px;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-size: 0.85em;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.85);
+            color: #1F2937;
+            border: 1.5px solid #E5E7EB;
+            border-radius: 20px;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+        }
+
+        body.dark-theme .theme-toggle-btn {
+            background: rgba(30, 41, 59, 0.85);
+            color: #F9FAFB;
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
         body { 
             font-family: 'Inter', system-ui, -apple-system, sans-serif; 
             background: var(--bg-gradient);
@@ -25,6 +104,7 @@
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         .card {
@@ -203,6 +283,9 @@
 </head>
 <body>
 
+    <!-- THEME TOGGLE BUTTON -->
+    <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()">🌙 Dark Mode</button>
+
     <div class="card">
         <h2>Palindrome Pro</h2>
         <div class="subtitle">Check words, phrases, or numbers</div>
@@ -252,7 +335,7 @@
                 
                 if (!isCaseSensitive) {
                     processed = processed.toLowerCase();
-                }
+                    }
                 
                 return processed;
             };
@@ -341,6 +424,31 @@
             inputEl.focus();
             resultEl.className = 'message neutral';
             resultEl.textContent = 'Awaiting input...';
+        });
+
+        // THEME SWITCH LOGIC
+        function applyTheme(theme) {
+            const toggleBtn = document.getElementById('themeToggle');
+            if (theme === 'dark') {
+                document.body.classList.add('dark-theme');
+                toggleBtn.textContent = '☀️ Light Mode';
+            } else {
+                document.body.classList.remove('dark-theme');
+                toggleBtn.textContent = '🌙 Dark Mode';
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = document.body.classList.contains('dark-theme');
+            const newTheme = isDark ? 'light' : 'dark';
+            localStorage.setItem('exp4_theme', newTheme);
+            applyTheme(newTheme);
+        }
+
+        // Restore saved theme on load
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('exp4_theme') || 'light';
+            applyTheme(savedTheme);
         });
     </script>
 </body>

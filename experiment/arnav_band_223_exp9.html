@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Preferences & Storage</title>
+  <style>
+    /* CSS Variables (Light Theme) */
+    :root {
+      --bg-gradient: radial-gradient(circle at 10% 20%, #f1f5f9 0%, #e2e8f0 90%);
+      --card-bg: rgba(255, 255, 255, 0.92);
+      --card-border: rgba(226, 232, 240, 0.8);
+      --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.07), 0 0 1px 1px rgba(0, 0, 0, 0.02);
+      --text-main: #1e293b;
+      --text-sub: #64748b;
+      --heading-color: #0f172a;
+      --input-bg: #f8fafc;
+      --input-border: #cbd5e1;
+      --input-focus-border: #3b82f6;
+      --accent-color: #2563eb;
+      --btn-secondary: #475569;
+      --btn-secondary-hover: #334155;
+      --btn-danger: #ef4444;
+      --btn-danger-hover: #dc2626;
+      --divider: #e2e8f0;
+      --session-bg: #f8fafc;
+      --font-size: 16px;
+    }
+
+    /* CSS Variables (Dark Theme) */
+    body.dark {
+      --bg-gradient: radial-gradient(circle at 10% 20%, #0b1120 0%, #030712 90%);
+      --card-bg: rgba(30, 41, 59, 0.85);
+      --card-border: rgba(51, 65, 85, 0.7);
+      --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), 0 0 1px 1px rgba(255, 255, 255, 0.05);
+      --text-main: #f1f5f9;
+      --text-sub: #94a3b8;
+      --heading-color: #f8fafc;
+      --input-bg: #0f172a;
+      --input-border: #334155;
+      --input-focus-border: #60a5fa;
+      --btn-secondary: #334155;
+      --btn-secondary-hover: #475569;
+      --divider: #334155;
+      --session-bg: rgba(15, 23, 42, 0.6);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", "Helvetica Neue", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      font-size: var(--font-size);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 32px 16px;
+      transition: background 0.4s ease, color 0.3s ease;
+    }
+
+    /* Container Card with Glassmorphism */
+    .card {
+      background-color: var(--card-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      box-shadow: var(--card-shadow);
+      width: 100%;
+      max-width: 500px;
+      padding: 36px 32px;
+      transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .card-header {
+      margin-bottom: 26px;
+    }
+
+    h2 {
+      color: var(--heading-color);
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .accent-pill {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: var(--accent-color);
+      box-shadow: 0 0 10px var(--accent-color);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .description {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      line-height: 1.45;
+    }
+
+    /* Form Layout */
+    .form-group {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    /* Inputs & Selects */
+    select,
+    input[type="text"] {
+      background-color: var(--input-bg);
+      border: 1.5px solid var(--input-border);
+      color: var(--text-main);
+      padding: 9px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    }
+
+    select {
+      min-width: 140px;
+      cursor: pointer;
+    }
+
+    select:focus,
+    input[type="text"]:focus {
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
+    }
+
+    /* Custom Color Input */
+    .color-picker-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    input[type="color"] {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      background: transparent;
+      padding: 0;
+    }
+
+    input[type="color"]::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+
+    input[type="color"]::-webkit-color-swatch {
+      border: 2px solid var(--input-border);
+      border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    }
+
+    input[type="color"]::-moz-color-swatch {
+      border: 2px solid var(--input-border);
+      border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    }
+
+    /* Action Buttons */
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin: 24px 0 28px 0;
+    }
+
+    button {
+      flex: 1;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    .btn-primary {
+      background-color: var(--accent-color);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.1);
+    }
+
+    .btn-secondary {
+      background-color: var(--btn-secondary);
+      color: #ffffff;
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--btn-secondary-hover);
+    }
+
+    .btn-danger {
+      background-color: var(--btn-danger);
+      color: #ffffff;
+    }
+
+    .btn-danger:hover {
+      background-color: var(--btn-danger-hover);
+    }
+
+    /* Session Storage Box */
+    .session-section {
+      border-top: 1px solid var(--divider);
+      padding-top: 24px;
+    }
+
+    .session-section h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--heading-color);
+      margin-bottom: 4px;
+    }
+
+    .session-box {
+      background-color: var(--session-bg);
+      border: 1px dashed var(--input-border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 14px;
+    }
+
+    .session-box input[type="text"] {
+      width: 100%;
+      margin-bottom: 12px;
+    }
+
+    .session-box .btn-session {
+      background-color: var(--accent-color);
+      color: #ffffff;
+      padding: 9px 18px;
+      border-radius: 8px;
+    }
+
+    .session-display {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--divider);
+      font-size: 0.88rem;
+      color: var(--text-main);
+      display: flex;
+      gap: 6px;
+      align-items: baseline;
+      word-break: break-word;
+    }
+
+    .session-display span {
+      color: var(--text-sub);
+    }
+
+    /* Notification Banner */
+    .toast-banner {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--text-main);
+      color: var(--card-bg);
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      pointer-events: none;
+      z-index: 99;
+    }
+
+    .toast-banner.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <!-- Header -->
+    <div class="card-header">
+      <h2><span class="accent-pill"></span> User Preferences</h2>
+      <p class="description">Your theme, font size, and accent color are saved using <code>localStorage</code>.</p>
+    </div>
+
+    <!-- Controls -->
+    <div class="form-group">
+      <label for="themeSelect">Theme</label>
+      <select id="themeSelect">
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="fontSizeSelect">Font Size</label>
+      <select id="fontSizeSelect">
+        <option value="small">Small</option>
+        <option value="medium" selected>Medium</option>
+        <option value="large">Large</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="accentColorInput">Accent Color</label>
+      <div class="color-picker-wrapper">
+        <input type="color" id="accentColorInput" value="#2563eb" title="Choose accent color" />
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button class="btn-primary" id="savePrefBtn">Save</button>
+      <button class="btn-secondary" id="resetPrefBtn">Reset</button>
+      <button class="btn-danger" id="clearStorageBtn">Clear</button>
+    </div>
+
+    <!-- Session Storage Section -->
+    <div class="session-section">
+      <h3>Session Storage Message</h3>
+      <p class="description">This message is saved only for the current browser session.</p>
+
+      <div class="session-box">
+        <input type="text" id="sessionInput" placeholder="Enter session message..." />
+        <button class="btn-session" id="saveSessionBtn">Save Session Message</button>
+        <div class="session-display">
+          <span>Saved session message:</span>
+          <strong id="sessionDisplay"></strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast-banner">Settings updated</div>
+
+  <script>
+    const themeSelect = document.getElementById('themeSelect');
+    const fontSizeSelect = document.getElementById('fontSizeSelect');
+    const accentColorInput = document.getElementById('accentColorInput');
+
+    const savePrefBtn = document.getElementById('savePrefBtn');
+    const resetPrefBtn = document.getElementById('resetPrefBtn');
+    const clearStorageBtn = document.getElementById('clearStorageBtn');
+
+    const sessionInput = document.getElementById('sessionInput');
+    const saveSessionBtn = document.getElementById('saveSessionBtn');
+    const sessionDisplay = document.getElementById('sessionDisplay');
+    const toast = document.getElementById('toast');
+
+    const fontSizeMap = {
+      small: '14px',
+      medium: '16px',
+      large: '18px'
+    };
+
+    function showToast(text) {
+      toast.textContent = text;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+
+    function applyStyles(theme, fontSize, accentColor) {
+      if (theme === 'dark') {
+        document.body.classList.add('dark');
+      } else {
+        document.body.classList.remove('dark');
+      }
+      document.documentElement.style.setProperty('--font-size', fontSizeMap[fontSize] || '16px');
+      document.documentElement.style.setProperty('--accent-color', accentColor);
+    }
+
+    function savePreferences() {
+      const selectedTheme = themeSelect.value;
+      const selectedFontSize = fontSizeSelect.value;
+      const selectedAccentColor = accentColorInput.value;
+
+      localStorage.setItem('pref_theme', selectedTheme);
+      localStorage.setItem('pref_fontSize', selectedFontSize);
+      localStorage.setItem('pref_accentColor', selectedAccentColor);
+
+      applyStyles(selectedTheme, selectedFontSize, selectedAccentColor);
+      showToast('Preferences saved successfully');
+    }
+
+    function loadPreferences() {
+      const savedTheme = localStorage.getItem('pref_theme') || 'light';
+      const savedFontSize = localStorage.getItem('pref_fontSize') || 'medium';
+      const savedAccentColor = localStorage.getItem('pref_accentColor') || '#2563eb';
+
+      themeSelect.value = savedTheme;
+      fontSizeSelect.value = savedFontSize;
+      accentColorInput.value = savedAccentColor;
+
+      applyStyles(savedTheme, savedFontSize, savedAccentColor);
+    }
+
+    function resetPreferences() {
+      localStorage.removeItem('pref_theme');
+      localStorage.removeItem('pref_fontSize');
+      localStorage.removeItem('pref_accentColor');
+
+      themeSelect.value = 'light';
+      fontSizeSelect.value = 'medium';
+      accentColorInput.value = '#2563eb';
+
+      applyStyles('light', 'medium', '#2563eb');
+      showToast('Preferences restored to default');
+    }
+
+    function clearStorage() {
+      localStorage.clear();
+      resetPreferences();
+      showToast('Storage cleared');
+    }
+
+    function saveSessionMessage() {
+      const message = sessionInput.value.trim();
+      sessionStorage.setItem('session_message', message);
+      displaySessionMessage();
+      showToast('Session message saved');
+    }
+
+    function displaySessionMessage() {
+      const savedMessage = sessionStorage.getItem('session_message') || '';
+      sessionDisplay.textContent = savedMessage;
+    }
+
+    // Live preview when switching dropdowns or picking colors
+    themeSelect.addEventListener('change', () => {
+      applyStyles(themeSelect.value, fontSizeSelect.value, accentColorInput.value);
+    });
+
+    fontSizeSelect.addEventListener('change', () => {
+      applyStyles(themeSelect.value, fontSizeSelect.value, accentColorInput.value);
+    });
+
+    accentColorInput.addEventListener('input', () => {
+      applyStyles(themeSelect.value, fontSizeSelect.value, accentColorInput.value);
+    });
+
+    // Event listeners
+    savePrefBtn.addEventListener('click', savePreferences);
+    resetPrefBtn.addEventListener('click', resetPreferences);
+    clearStorageBtn.addEventListener('click', clearStorage);
+    saveSessionBtn.addEventListener('click', saveSessionMessage);
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadPreferences();
+      displaySessionMessage();
+    });
+  </script>
+</body>
+</html>

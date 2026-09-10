@@ -13,6 +13,119 @@
             color: #1e293b;
             margin: 0;
             padding: 40px 20px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Dark Theme Overrides */
+        body.dark-theme {
+            background-color: #0b1120;
+            color: #f1f5f9;
+        }
+
+        body.dark-theme .portal-header {
+            border-bottom-color: #334155;
+        }
+
+        body.dark-theme .portal-header h1 {
+            color: #f8fafc;
+        }
+
+        body.dark-theme .portal-header span {
+            background: #1e293b;
+            color: #38bdf8;
+        }
+
+        body.dark-theme .metric-card {
+            background: #1e293b;
+            border-color: #334155;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
+        }
+
+        body.dark-theme .metric-label {
+            color: #94a3b8;
+        }
+
+        body.dark-theme .metric-value {
+            color: #f8fafc;
+        }
+
+        body.dark-theme .panel {
+            background: #1e293b;
+            border-color: #334155;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+        }
+
+        body.dark-theme .panel h3 {
+            color: #f1f5f9;
+        }
+
+        body.dark-theme .field label {
+            color: #cbd5e1;
+        }
+
+        body.dark-theme .field input {
+            background: #0f172a;
+            border-color: #334155;
+            color: #f8fafc;
+        }
+
+        body.dark-theme .field input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+        }
+
+        body.dark-theme .btn-action {
+            background: #0284c7;
+        }
+
+        body.dark-theme .btn-action:hover {
+            background: #0369a1;
+        }
+
+        body.dark-theme th {
+            color: #94a3b8;
+            border-bottom-color: #334155;
+        }
+
+        body.dark-theme td {
+            border-bottom-color: #334155;
+            color: #f1f5f9;
+        }
+
+        body.dark-theme .pill-pass {
+            background: #064e3b;
+            color: #6ee7b7;
+        }
+
+        body.dark-theme .pill-fail {
+            background: #7f1d1d;
+            color: #fca5a5;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 8px 16px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.85em;
+            font-weight: 600;
+            background: #ffffff;
+            color: #0f172a;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            z-index: 1000;
+        }
+
+        body.dark-theme .theme-toggle-btn {
+            background: #1e293b;
+            color: #38bdf8;
+            border-color: #334155;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
         .portal-container {
@@ -184,6 +297,9 @@
 </head>
 <body>
 
+    <!-- THEME TOGGLE BUTTON -->
+    <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()">🌙 Dark Mode</button>
+
     <div class="portal-container">
         <div class="portal-header">
             <h1>Academic Analytics Portal</h1>
@@ -293,7 +409,7 @@
                 if (inputs[i].value === "" || val < 0 || val > 100) {
                     alert(`Invalid mark entry for ${subjects[i]}. Must be between 0 and 100.`);
                     return;
-                }
+            }
                 marks.push(val);
                 total += val;
                 if (val < 35) hasFailed = true;
@@ -350,6 +466,31 @@
             document.getElementById('breakdownBody').innerHTML = tableHTML;
             document.getElementById('analyticsPanel').style.display = 'block';
         }
+
+        // THEME SWITCH LOGIC
+        function applyTheme(theme) {
+            const toggleBtn = document.getElementById('themeToggle');
+            if (theme === 'dark') {
+                document.body.classList.add('dark-theme');
+                toggleBtn.textContent = '☀️ Light Mode';
+            } else {
+                document.body.classList.remove('dark-theme');
+                toggleBtn.textContent = '🌙 Dark Mode';
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = document.body.classList.contains('dark-theme');
+            const newTheme = isDark ? 'light' : 'dark';
+            localStorage.setItem('exp3_theme', newTheme);
+            applyTheme(newTheme);
+        }
+
+        // Restore saved theme on load
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('exp3_theme') || 'light';
+            applyTheme(savedTheme);
+        });
     </script>
 
 </body>

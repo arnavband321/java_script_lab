@@ -38,6 +38,85 @@
             --ease: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        /* Light Theme Overrides */
+        body.light-theme {
+            --bg: #f6f8fa;
+            --surface: #ffffff;
+            --border: #d0d7de;
+            --border-strong: #afb8c1;
+            --text: #24292f;
+            --text-muted: #57606a;
+            --text-dim: #6e7781;
+            --shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+            --accent: #1a7f37;
+            --cyan: #0969da;
+            --purple: #8250df;
+            --red: #cf222e;
+        }
+
+        body.light-theme .bg-canvas {
+            background: radial-gradient(circle at 50% 0%, #ffffff 0%, #eaeef2 70%);
+        }
+
+        body.light-theme .page-header h1 {
+            color: #1f2328;
+            text-shadow: none;
+        }
+
+        body.light-theme textarea {
+            background: #f6f8fa;
+            color: #1f2328;
+            border-color: #d0d7de;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        body.light-theme .run-btn {
+            color: #ffffff;
+            background: #0969da;
+        }
+
+        body.light-theme .run-btn:hover {
+            background: #218bff;
+        }
+
+        body.light-theme .stat-card {
+            background: #f6f8fa;
+            border-color: #d0d7de;
+        }
+
+        body.light-theme .output-box {
+            background: #ffffff;
+            border-color: #d0d7de;
+        }
+
+        body.light-theme .output-header {
+            border-bottom-color: #d0d7de;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 8px 16px;
+            font-family: var(--mono);
+            font-size: 0.85em;
+            background: var(--surface);
+            color: var(--cyan);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s var(--ease);
+            box-shadow: var(--shadow);
+            z-index: 1000;
+        }
+
+        body.light-theme .theme-toggle-btn {
+            background: #ffffff;
+            color: #0969da;
+            border-color: #d0d7de;
+        }
+
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
@@ -48,6 +127,7 @@
             line-height: 1.6;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+            transition: background 0.3s var(--ease), color 0.3s var(--ease);
         }
 
         /* Ambient Orbs */
@@ -100,7 +180,7 @@
         .section-card {
             background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
             padding: 2.25rem; margin-bottom: 2.5rem; box-shadow: var(--shadow);
-            backdrop-filter: blur(10px); transition: border-color 0.3s var(--ease);
+            backdrop-filter: blur(10px); transition: border-color 0.3s var(--ease), background 0.3s var(--ease);
         }
         .section-card:hover { border-color: var(--border-strong); }
         
@@ -157,6 +237,9 @@
     </style>
 </head>
 <body>
+
+    <!-- THEME TOGGLE BUTTON -->
+    <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()">☀️ Light Mode</button>
 
     <div class="bg-canvas">
         <div class="orb orb-a"></div>
@@ -312,6 +395,31 @@ thanks!</textarea>
 
             // Output to virtual console
             outputContent.innerHTML = htmlOutput;
+        });
+
+        // THEME SWITCH LOGIC
+        function applyTheme(theme) {
+            const toggleBtn = document.getElementById('themeToggle');
+            if (theme === 'light') {
+                document.body.classList.add('light-theme');
+                toggleBtn.textContent = '🌙 Dark Mode';
+            } else {
+                document.body.classList.remove('light-theme');
+                toggleBtn.textContent = '☀️ Light Mode';
+            }
+        }
+
+        function toggleTheme() {
+            const isLight = document.body.classList.contains('light-theme');
+            const newTheme = isLight ? 'dark' : 'light';
+            localStorage.setItem('exp6_theme', newTheme);
+            applyTheme(newTheme);
+        }
+
+        // Restore saved theme on load
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('exp6_theme') || 'dark';
+            applyTheme(savedTheme);
         });
     </script>
 </body>
