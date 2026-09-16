@@ -1,0 +1,42 @@
+[
+  {
+    "id": 101,
+    "name": "Arnav Band",
+    "course": "B.Tech Computer Science",
+    "year": "3rd Year",
+    "email": "arnav@example.com",
+    "marks": 87
+  },
+  {
+    "id": 102,
+    "name": "Jayesh Mundle",
+    "course": "B.Tech Information Technology",
+    "year": "3rd Year",
+    "email": "jayesh@example.com",
+    "marks": 91
+  },
+  {
+    "id": 103,
+    "name": "dhawle",
+    "course": "B.Tech Computer Science",
+    "year": "2nd Year",
+    "email": "dhawle@example.com",
+    "marks": 78
+  },
+  {
+    "id": 104,
+    "name": "Aditya Joshi",
+    "course": "B.Tech Electronics",
+    "year": "3rd Year",
+    "email": "aditya@example.com",
+    "marks": 84
+  },
+  {
+    "id": 105,
+    "name": "kunali",
+    "course": "B.Tech Computer Science",
+    "year": "2nd Year",
+    "email": "kunali@example.com",
+    "marks": 93
+  }
+]
