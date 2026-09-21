@@ -1,0 +1,50 @@
+[
+  {
+    "studentName": "Arnav Band",
+    "prn": "24070521223",
+    "department": "Computer Science & Engineering",
+    "year": "3rd Year",
+    "eventName": "Hackathon 2026",
+    "registrationStatus": "Registered"
+  },
+  {
+    "studentName": "Rohit Sharma",
+    "prn": "24070521224",
+    "department": "Information Technology",
+    "year": "3rd Year",
+    "eventName": "Web Design Sprint",
+    "registrationStatus": "Pending"
+  },
+  {
+    "studentName": "Gaurav jammu ",
+    "prn": "24070521105",
+    "department": "Electronics & Telecommunication",
+    "year": "2nd Year",
+    "eventName": "Robotics Expo",
+    "registrationStatus": "Cancelled"
+  },
+  {
+    "studentName": "Aditya Patil",
+    "prn": "24070521188",
+    "department": "Computer Science & Engineering",
+    "year": "4th Year",
+    "eventName": "Hackathon 2026",
+    "registrationStatus": "Registered"
+  },
+  {
+    "studentName": "Rakesh Kulkarni",
+    "prn": "24070521092",
+    "department": "Mechanical Engineering",
+    "year": "1st Year",
+    "eventName": "AI Symposium",
+    "registrationStatus": "Pending"
+  },
+  {
+    "studentName": "Tanmay Joshi",
+    "prn": "24070521310",
+    "department": "Computer Science & Engineering",
+    "year": "3rd Year",
+    "eventName": "Code Debugging Clash",
+    "registrationStatus": "Cancelled"
+  }
+]

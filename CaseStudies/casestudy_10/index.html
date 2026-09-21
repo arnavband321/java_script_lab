@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Campus Event Registration System</title>
+  
+  <!-- jQuery Library CDN -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #cbd5e1;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --secondary: #475569;
+      --secondary-hover: #334155;
+      --table-header: #f1f5f9;
+      --table-row-hover: #f8fafc;
+      --status-reg-bg: #dcfce7;
+      --status-reg-text: #166534;
+      --status-pen-bg: #fef3c7;
+      --status-pen-text: #92400e;
+      --status-can-bg: #fee2e2;
+      --status-can-text: #991b1b;
+      --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    }
+
+    body.dark-theme {
+      --bg: #0b1120;
+      --card-bg: #1e293b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --secondary: #334155;
+      --secondary-hover: #475569;
+      --table-header: #0f172a;
+      --table-row-hover: #243044;
+      --status-reg-bg: #064e3b;
+      --status-reg-text: #86efac;
+      --status-pen-bg: #451a03;
+      --status-pen-text: #fcd34d;
+      --status-can-bg: #450a0a;
+      --status-can-text: #fca5a5;
+      --card-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 40px 20px;
+      font-size: 1.05rem;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .theme-toggle-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      font-weight: 700;
+      background: var(--card-bg);
+      color: var(--text);
+      border: 1.5px solid var(--border);
+      border-radius: 24px;
+      cursor: pointer;
+      box-shadow: var(--card-shadow);
+      transition: all 0.2s ease;
+      z-index: 1000;
+    }
+
+    .theme-toggle-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    header h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1.15rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 26px;
+      margin-bottom: 24px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button.btn {
+      padding: 12px 22px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    button.btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-fetch {
+      background-color: var(--primary);
+      color: #ffffff;
+    }
+
+    body.dark-theme .btn-fetch {
+      color: #0b1120;
+    }
+
+    .btn-fetch:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-jquery {
+      background-color: var(--secondary);
+      color: #ffffff;
+    }
+
+    .btn-jquery:hover {
+      background-color: var(--secondary-hover);
+    }
+
+    .filter-controls {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      flex: 1;
+      justify-content: flex-end;
+    }
+
+    .filter-controls input[type="text"],
+    .filter-controls select {
+      padding: 12px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: var(--card-bg);
+      color: var(--text);
+      font-size: 1.05rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .filter-controls input[type="text"] {
+      min-width: 280px;
+    }
+
+    .filter-controls input:focus,
+    .filter-controls select:focus {
+      border-color: var(--primary);
+    }
+
+    .status-alert {
+      padding: 14px 20px;
+      border-radius: 8px;
+      font-size: 1.05rem;
+      font-weight: 500;
+      margin-bottom: 18px;
+      display: none;
+    }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid #ef4444;
+      color: #ef4444;
+    }
+
+    .alert-info {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid var(--primary);
+      color: var(--primary);
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 1.05rem;
+    }
+
+    thead th {
+      background-color: var(--table-header);
+      padding: 16px 16px;
+      font-weight: 700;
+      color: var(--text-muted);
+      border-bottom: 2px solid var(--border);
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      letter-spacing: 0.6px;
+    }
+
+    tbody td {
+      padding: 16px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tbody tr:hover {
+      background-color: var(--table-row-hover);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 14px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .status-Registered {
+      background-color: var(--status-reg-bg);
+      color: var(--status-reg-text);
+    }
+
+    .status-Pending {
+      background-color: var(--status-pen-bg);
+      color: var(--status-pen-text);
+    }
+
+    .status-Cancelled {
+      background-color: var(--status-can-bg);
+      color: var(--status-can-text);
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--text-muted);
+      padding: 38px 12px;
+      font-size: 1.1rem;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Theme Toggle Button -->
+  <button class="theme-toggle-btn" id="themeToggle">🌙 Dark Mode</button>
+
+  <div class="container">
+    <header>
+      <h1>Campus Event Registration System</h1>
+      <p>Dynamic JSON Data Loader using JavaScript fetch() and jQuery $.getJSON()</p>
+    </header>
+
+    <!-- Action Controls & Filter Toolbar -->
+    <div class="card">
+      <div class="toolbar">
+        <div class="btn-group">
+          <button class="btn btn-fetch" id="loadFetchBtn">Load Student Data (fetch)</button>
+          <button class="btn btn-jquery" id="loadJqueryBtn">Load via jQuery ($.getJSON)</button>
+        </div>
+
+        <div class="filter-controls">
+          <input type="text" id="searchInput" placeholder="Search by Student Name or PRN..." disabled />
+          <select id="statusFilter" disabled>
+            <option value="ALL">All Statuses</option>
+            <option value="Registered">Registered</option>
+            <option value="Pending">Pending</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alert / Message Output Area -->
+    <div id="alertBox" class="status-alert"></div>
+
+    <!-- Table Skeleton -->
+    <div class="card">
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Student Name</th>
+              <th>PRN</th>
+              <th>Department</th>
+              <th>Year</th>
+              <th>Event Name</th>
+              <th>Registration Status</th>
+            </tr>
+          </thead>
+          <tbody id="studentTableBody">
+            <tr>
+              <td colspan="7" class="empty-state">No student records loaded. Click a load button above.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let studentData = [];
+
+    // 1. Theme Management (localStorage persistence)
+    function applyTheme(theme) {
+      if (theme === 'dark') {
+        $('body').addClass('dark-theme');
+        $('#themeToggle').text('☀️ Light Mode');
+      } else {
+        $('body').removeClass('dark-theme');
+        $('#themeToggle').text('🌙 Dark Mode');
+      }
+    }
+
+    $('#themeToggle').on('click', function () {
+      const nextTheme = $('body').hasClass('dark-theme') ? 'light' : 'dark';
+      localStorage.setItem('campus_event_theme', nextTheme);
+      applyTheme(nextTheme);
+    });
+
+    // 2. Alert Box Display Helpers
+    function showAlert(message, type = 'info') {
+      const alertBox = $('#alertBox');
+      alertBox.removeClass('alert-error alert-info');
+      alertBox.addClass(type === 'error' ? 'alert-error' : 'alert-info');
+      alertBox.text(message).fadeIn(200);
+    }
+
+    function hideAlert() {
+      $('#alertBox').hide();
+    }
+
+    function enableControls() {
+      $('#searchInput, #statusFilter').prop('disabled', false);
+    }
+
+    // 3. Dynamic HTML Table Generation with Live Filtering
+    function renderTable() {
+      hideAlert();
+      const tbody = $('#studentTableBody');
+      tbody.empty();
+
+      if (!studentData || studentData.length === 0) {
+        tbody.append(`<tr><td colspan="7" class="empty-state">No student records loaded.</td></tr>`);
+        return;
+      }
+
+      const searchTerm = $('#searchInput').val().trim().toLowerCase();
+      const selectedStatus = $('#statusFilter').val();
+
+      const filtered = studentData.filter(student => {
+        const matchesSearch = student.studentName.toLowerCase().includes(searchTerm) || 
+                              student.prn.toLowerCase().includes(searchTerm);
+        const matchesStatus = (selectedStatus === 'ALL') || (student.registrationStatus === selectedStatus);
+
+        return matchesSearch && matchesStatus;
+      });
+
+      if (filtered.length === 0) {
+        tbody.append(`<tr><td colspan="7" class="empty-state">No student matches the search/filter criteria.</td></tr>`);
+        return;
+      }
+
+      filtered.forEach((student, index) => {
+        const row = `
+          <tr>
+            <td>${index + 1}</td>
+            <td><strong>${student.studentName}</strong></td>
+            <td><code>${student.prn}</code></td>
+            <td>${student.department}</td>
+            <td>${student.year}</td>
+            <td>${student.eventName}</td>
+            <td><span class="status-badge status-${student.registrationStatus}">${student.registrationStatus}</span></td>
+          </tr>
+        `;
+        tbody.append(row);
+      });
+    }
+
+    // 4. Data Loading via JavaScript fetch()
+    $('#loadFetchBtn').on('click', function () {
+      fetch('students.json')
+        .then(response => {
+          if (!response.ok) throw new Error();
+          return response.json();
+        })
+        .then(data => {
+          studentData = data;
+          enableControls();
+          renderTable();
+          showAlert(`Successfully loaded ${studentData.length} records using JavaScript fetch().`, 'info');
+        })
+        .catch(() => {
+          studentData = [];
+          renderTable();
+          showAlert("JSON data cannot be loaded. Ensure 'students.json' is present in the folder.", "error");
+        });
+    });
+
+    // 5. Data Loading via jQuery $.getJSON()
+    $('#loadJqueryBtn').on('click', function () {
+      $.getJSON('students.json')
+        .done(function (data) {
+          studentData = data;
+          enableControls();
+          renderTable();
+          showAlert(`Successfully loaded ${studentData.length} records using jQuery $.getJSON().`, 'info');
+        })
+        .fail(function () {
+          studentData = [];
+          renderTable();
+          showAlert("JSON data cannot be loaded. Ensure 'students.json' is present in the folder.", "error");
+        });
+    });
+
+    // 6. Live Search & Dropdown Change Listeners
+    $('#searchInput').on('input', renderTable);
+    $('#statusFilter').on('change', renderTable);
+
+    // Initial load setup
+    $(document).ready(function () {
+      const savedTheme = localStorage.getItem('campus_event_theme') || 'light';
+      applyTheme(savedTheme);
+    });
+  </script>
+</body>
+</html>
