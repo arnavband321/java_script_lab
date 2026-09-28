@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dynamic Class Scheduler & Countdown</title>
+  
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #cbd5e1;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --success: #16a34a;
+      --warning: #f59e0b;
+      --danger: #dc2626;
+      --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.06);
+      --highlight-bg: #eff6ff;
+      --timer-bg: #0f172a;
+      --timer-text: #38bdf8;
+    }
+
+    body.dark-theme {
+      --bg: #0b1120;
+      --card-bg: #1e293b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --card-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.5);
+      --highlight-bg: rgba(56, 189, 248, 0.1);
+      --timer-bg: #030712;
+      --timer-text: #38bdf8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+    }
+
+    /* Fixed Theme Toggle Button */
+    .theme-toggle-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 8px 18px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      background: var(--card-bg);
+      color: var(--text);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      cursor: pointer;
+      box-shadow: var(--card-shadow);
+      transition: all 0.2s ease;
+      z-index: 1000;
+    }
+
+    .theme-toggle-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+    }
+
+    .title-group h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+    }
+
+    .live-clock-badge {
+      font-family: monospace;
+      background: var(--highlight-bg);
+      color: var(--primary);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1rem;
+      border: 1px solid var(--border);
+    }
+
+    /* Current Class Banner */
+    .current-class-card {
+      background: var(--highlight-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .current-class-card .label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    .current-class-card h2 {
+      font-size: 1.6rem;
+      color: var(--primary);
+      margin: 6px 0;
+    }
+
+    .current-class-card .venue {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    /* Digital Countdown Display */
+    .countdown-box {
+      background: var(--timer-bg);
+      border-radius: 14px;
+      padding: 24px;
+      text-align: center;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .countdown-digits {
+      font-family: monospace;
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: var(--timer-text);
+      letter-spacing: 2px;
+    }
+
+    /* Timed Notification Bar */
+    .notification-bar {
+      min-height: 44px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      background: rgba(22, 163, 74, 0.15);
+      color: var(--success);
+      border: 1px solid var(--success);
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-align: center;
+      margin-bottom: 20px;
+      opacity: 0;
+      transform: translateY(-6px);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .notification-bar.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Button Controls */
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    button.btn {
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    button.btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-start { background: var(--success); color: #fff; }
+    .btn-pause { background: var(--warning); color: #fff; }
+    .btn-reset { background: var(--danger); color: #fff; }
+
+    /* Custom Input Bar */
+    .custom-time-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .custom-time-row input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: var(--card-bg);
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    .custom-time-row input:focus {
+      border-color: var(--primary);
+    }
+
+    .btn-set {
+      background: var(--primary);
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Routine Ledger */
+    .routine-section h3 {
+      font-size: 1rem;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    .routine-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .routine-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+
+    .routine-item.active-class {
+      border-color: var(--primary);
+      background: var(--highlight-bg);
+      font-weight: 600;
+    }
+
+    .venue-tag {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .duration-tag {
+      font-family: monospace;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Theme Toggle Button -->
+  <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()">🌙 Dark Mode</button>
+
+  <div class="container">
+    <div class="card">
+      <div class="header-row">
+        <div class="title-group">
+          <h1>Class Scheduler</h1>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 3px;">JavaScript Timers & ES6 Modules</p>
+        </div>
+        <div class="live-clock-badge" id="liveClock">00:00:00</div>
+      </div>
+
+      <!-- Upcoming / Active Class Card -->
+      <div class="current-class-card">
+        <div class="label">Upcoming Class</div>
+        <h2 id="currentSubject">Loading...</h2>
+        <div class="venue" id="currentVenue">Loading venue...</div>
+      </div>
+
+      <!-- Real-Time Countdown Box -->
+      <div class="countdown-box">
+        <div class="countdown-digits" id="countdownDisplay">00:00</div>
+      </div>
+
+      <!-- Timed Status Banner (setTimeout) -->
+      <div class="notification-bar" id="notificationBar">Awaiting timer start...</div>
+
+      <!-- Timer Control Actions -->
+      <div class="controls-grid">
+        <button class="btn btn-start" id="startBtn">Start</button>
+        <button class="btn btn-pause" id="pauseBtn">Pause</button>
+        <button class="btn btn-reset" id="resetBtn">Reset</button>
+      </div>
+
+      <!-- Custom Seconds Input -->
+      <div class="custom-time-row">
+        <input type="number" id="customSecInput" placeholder="Enter seconds (e.g. 10)" min="1" />
+        <button class="btn-set" id="setBtn">Set</button>
+      </div>
+
+      <!-- Class Routine Ledger -->
+      <div class="routine-section">
+        <h3>Class Routine Schedule</h3>
+        <ul class="routine-list" id="routineList"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Theme Management Script (localStorage) -->
+  <script>
+    function applyTheme(theme) {
+      const toggleBtn = document.getElementById('themeToggle');
+      if (theme === 'dark') {
+        document.body.classList.add('dark-theme');
+        toggleBtn.textContent = '☀️ Light Mode';
+      } else {
+        document.body.classList.remove('dark-theme');
+        toggleBtn.textContent = '🌙 Dark Mode';
+      }
+    }
+
+    function toggleTheme() {
+      const isDark = document.body.classList.contains('dark-theme');
+      const newTheme = isDark ? 'light' : 'dark';
+      localStorage.setItem('scheduler_theme', newTheme);
+      applyTheme(newTheme);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = localStorage.getItem('scheduler_theme') || 'light';
+      applyTheme(savedTheme);
+    });
+  </script>
+
+  <!-- ES6 Modules Engine (Combined via Dynamic Blob Loading) -->
+  <script type="module">
+    // MODULE 1: routine.js
+    const routineModuleCode = `
+      export const classRoutine = [
+        { id: 1, subject: "Web Technologies", venue: "Lab 3 (Ground Floor)", durationSeconds: 15 },
+        { id: 2, subject: "Computer Networks", venue: "Lab 1 (First Floor)", durationSeconds: 25 },
+        { id: 3, subject: "Operating Systems", venue: "Room 204", durationSeconds: 20 },
+        { id: 4, subject: "Database Management Systems", venue: "Lab 2 (Seminar Hall)", durationSeconds: 30 }
+      ];
+    `;
+
+    // MODULE 2: timer.js
+    const timerModuleCode = `
+      export function formatTime(totalSeconds) {
+        const mins = Math.floor(totalSeconds / 60);
+        const secs = totalSeconds % 60;
+        return String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+      }
+
+      export function startClock(clockElement) {
+        function tick() {
+          const now = new Date();
+          clockElement.textContent = now.toLocaleTimeString();
+        }
+        tick();
+        return setInterval(tick, 1000);
+      }
+    `;
+
+    // Create module blob URLs
+    const routineBlob = new Blob([routineModuleCode], { type: 'text/javascript' });
+    const timerBlob = new Blob([timerModuleCode], { type: 'text/javascript' });
+
+    // ES6 Import statements
+    const { classRoutine } = await import(URL.createObjectURL(routineBlob));
+    const { formatTime, startClock } = await import(URL.createObjectURL(timerBlob));
+
+    // Application State
+    let currentClassIndex = 0;
+    let remainingSeconds = classRoutine[0].durationSeconds;
+    let countdownInterval = null;
+    let isRunning = false;
+    let notificationTimeout = null;
+
+    // DOM Elements
+    const clockDisplay = document.getElementById('liveClock');
+    const currentSubjectEl = document.getElementById('currentSubject');
+    const currentVenueEl = document.getElementById('currentVenue');
+    const countdownDisplay = document.getElementById('countdownDisplay');
+    const notificationBar = document.getElementById('notificationBar');
+    const customSecInput = document.getElementById('customSecInput');
+
+    const startBtn = document.getElementById('startBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const setBtn = document.getElementById('setBtn');
+    const routineListEl = document.getElementById('routineList');
+
+    // 1. Live Clock via setInterval()
+    startClock(clockDisplay);
+
+    // 2. Class Routine Display Updates
+    function updateClassDisplay() {
+      const current = classRoutine[currentClassIndex];
+      currentSubjectEl.textContent = current.subject;
+      currentVenueEl.textContent = current.venue;
+      countdownDisplay.textContent = formatTime(remainingSeconds);
+      renderRoutineList();
+    }
+
+    function renderRoutineList() {
+      routineListEl.innerHTML = '';
+      classRoutine.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.className = `routine-item ${index === currentClassIndex ? 'active-class' : ''}`;
+        li.innerHTML = `
+          <div>
+            <strong>${item.subject}</strong>
+            <span class="venue-tag">${item.venue}</span>
+          </div>
+          <span class="duration-tag">${formatTime(item.durationSeconds)}</span>
+        `;
+        routineListEl.appendChild(li);
+      });
+    }
+
+    // 3. Timed Notification via setTimeout()
+    function showNotification(message) {
+      notificationBar.textContent = message;
+      notificationBar.classList.add('visible');
+
+      if (notificationTimeout) clearTimeout(notificationTimeout);
+
+      notificationTimeout = setTimeout(() => {
+        notificationBar.classList.remove('visible');
+      }, 4000);
+    }
+
+    // 4. Countdown Execution using setInterval() & clearInterval()
+    function startCountdown() {
+      if (isRunning) return;
+      isRunning = true;
+
+      countdownInterval = setInterval(() => {
+        if (remainingSeconds > 0) {
+          remainingSeconds--;
+          countdownDisplay.textContent = formatTime(remainingSeconds);
+        } else {
+          clearInterval(countdownInterval);
+          isRunning = false;
+
+          const finishedClass = classRoutine[currentClassIndex];
+          showNotification(`Started: ${finishedClass.subject}!`);
+
+          // Cycle to next class in routine
+          currentClassIndex = (currentClassIndex + 1) % classRoutine.length;
+          remainingSeconds = classRoutine[currentClassIndex].durationSeconds;
+          updateClassDisplay();
+
+          startCountdown();
+        }
+      }, 1000);
+    }
+
+    function pauseCountdown() {
+      if (!isRunning) return;
+      clearInterval(countdownInterval);
+      isRunning = false;
+      showNotification('Countdown paused');
+    }
+
+    function resetCountdown() {
+      clearInterval(countdownInterval);
+      isRunning = false;
+      remainingSeconds = classRoutine[currentClassIndex].durationSeconds;
+      countdownDisplay.textContent = formatTime(remainingSeconds);
+      showNotification('Countdown reset to routine duration');
+    }
+
+    function setCustomTime() {
+      const seconds = parseInt(customSecInput.value, 10);
+      if (isNaN(seconds) || seconds <= 0) {
+        alert('Please enter a valid positive number of seconds.');
+        return;
+      }
+      clearInterval(countdownInterval);
+      isRunning = false;
+      remainingSeconds = seconds;
+      countdownDisplay.textContent = formatTime(remainingSeconds);
+      showNotification(`Timer set to ${seconds} seconds`);
+      customSecInput.value = '';
+    }
+
+    // Event Bindings
+    startBtn.addEventListener('click', startCountdown);
+    pauseBtn.addEventListener('click', pauseCountdown);
+    resetBtn.addEventListener('click', resetCountdown);
+    setBtn.addEventListener('click', setCustomTime);
+
+    // Initial render
+    updateClassDisplay();
+  </script>
+</body>
+</html>
