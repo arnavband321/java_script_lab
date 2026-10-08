@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Class Scheduler</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #cbd5e1;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --success: #16a34a;
+      --warning: #f59e0b;
+      --danger: #dc2626;
+      --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.06);
+      --highlight-bg: #eff6ff;
+      --timer-bg: #0f172a;
+      --timer-text: #38bdf8;
+    }
+
+    body.dark-theme {
+      --bg: #0b1120;
+      --card-bg: #1e293b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --card-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.5);
+      --highlight-bg: rgba(56, 189, 248, 0.1);
+      --timer-bg: #030712;
+      --timer-text: #38bdf8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 820px;
+    }
+
+    /* Fixed Theme Toggle */
+    .theme-toggle-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 8px 18px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      background: var(--card-bg);
+      color: var(--text);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      cursor: pointer;
+      box-shadow: var(--card-shadow);
+      transition: all 0.2s ease;
+      z-index: 1000;
+    }
+
+    .theme-toggle-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 24px;
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .title-group h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+    }
+
+    .title-group p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .live-clock-badge {
+      font-family: monospace;
+      background: var(--highlight-bg);
+      color: var(--primary);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      border: 1px solid var(--border);
+    }
+
+    /* Temporary Notification Bar (setTimeout) */
+    .notification-bar {
+      min-height: 44px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      background: rgba(37, 99, 235, 0.12);
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-align: center;
+      margin-bottom: 20px;
+      opacity: 0;
+      transform: translateY(-6px);
+      transition: all 0.35s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .notification-bar.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Class Cards Layout */
+    .class-info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .status-panel {
+      background: var(--highlight-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+    }
+
+    .status-panel.next-panel {
+      background: transparent;
+    }
+
+    .badge-label {
+      display: inline-block;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-current {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    body.dark-theme .badge-current {
+      color: #0b1120;
+    }
+
+    .badge-next {
+      background: var(--border);
+      color: var(--text-muted);
+    }
+
+    .panel-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .panel-detail {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    /* Digital Countdown Box */
+    .countdown-box {
+      background: var(--timer-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      text-align: center;
+      margin-bottom: 22px;
+    }
+
+    .countdown-header {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 6px;
+    }
+
+    .countdown-timer {
+      font-family: monospace;
+      font-size: 2.6rem;
+      font-weight: 800;
+      color: var(--timer-text);
+      letter-spacing: 1px;
+    }
+
+    /* Mode Switching / Simulation Controls */
+    .sim-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--highlight-bg);
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      padding: 10px 16px;
+      margin-bottom: 22px;
+      font-size: 0.85rem;
+    }
+
+    .btn-sim {
+      padding: 6px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      color: var(--text);
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.82rem;
+    }
+
+    /* Schedule Table */
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+
+    thead th {
+      padding: 12px 14px;
+      font-weight: 700;
+      color: var(--text-muted);
+      border-bottom: 2px solid var(--border);
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.5px;
+    }
+
+    tbody td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tbody tr.active-row {
+      background: var(--highlight-bg);
+      font-weight: 600;
+    }
+
+    .status-pill {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 12px;
+      text-transform: uppercase;
+    }
+
+    .pill-ongoing { background: #dcfce7; color: #166534; }
+    .pill-upcoming { background: #eff6ff; color: #1e40af; }
+    .pill-completed { background: #f1f5f9; color: #64748b; }
+
+    body.dark-theme .pill-ongoing { background: #052e16; color: #86efac; }
+    body.dark-theme .pill-upcoming { background: #1e3a8a; color: #93c5fd; }
+    body.dark-theme .pill-completed { background: #1e293b; color: #94a3b8; }
+  </style>
+</head>
+<body>
+
+  <!-- Theme Toggle -->
+  <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()">🌙 Dark Mode</button>
+
+  <div class="container">
+    <div class="card">
+      <div class="header-row">
+        <div class="title-group">
+          <h1>Smart Class Scheduler</h1>
+          <p>Real-Time Countdown & Automated Class Tracker</p>
+        </div>
+        <div class="live-clock-badge" id="liveClock">00:00:00 AM</div>
+      </div>
+
+      <!-- Temporary Notification Bar (setTimeout) -->
+      <div class="notification-bar" id="notificationBar">System online</div>
+
+      <!-- Current & Next Class Grid -->
+      <div class="class-info-grid">
+        <!-- Current Class -->
+        <div class="status-panel">
+          <span class="badge-label badge-current">Current Class</span>
+          <div class="panel-title" id="currentSubject">No Ongoing Class</div>
+          <div class="panel-detail" id="currentDetails">Faculty: --<br>Classroom: --<br>Timing: --</div>
+        </div>
+
+        <!-- Next Scheduled Class -->
+        <div class="status-panel next-panel">
+          <span class="badge-label badge-next">Next Scheduled Class</span>
+          <div class="panel-title" id="nextSubject">No Upcoming Class</div>
+          <div class="panel-detail" id="nextDetails">Faculty: --<br>Classroom: --<br>Timing: --</div>
+        </div>
+      </div>
+
+      <!-- Countdown Display -->
+      <div class="countdown-box">
+        <div class="countdown-header" id="countdownLabel">Status</div>
+        <div class="countdown-timer" id="countdownDigits">00:00:00</div>
+      </div>
+
+      <!-- Simulator Switcher for Lab Demonstration -->
+      <div class="sim-bar">
+        <span id="modeDescription"><strong>Clock Mode:</strong> Real System Time</span>
+        <button class="btn-sim" id="simToggleBtn" onclick="toggleSimulationMode()">Fast Demo Mode (Simulated)</button>
+      </div>
+
+      <!-- Schedule Table (At least 5 Classes) -->
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Subject Name</th>
+              <th>Faculty Name</th>
+              <th>Classroom</th>
+              <th>Start Time</th>
+              <th>End Time</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="scheduleTableBody">
+            <!-- Rendered by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // -------------------------------------------------------------
+    // 1. CLASS SCHEDULE DATA (Requirement 1: At least 5 classes)
+    // -------------------------------------------------------------
+    const classSchedule = [
+      {
+        id: 1,
+        subjectName: "Web Technologies",
+        facultyName: "Prof. K. Sharma",
+        classroom: "Lab 3 (Ground Floor)",
+        startTime: "09:00",
+        endTime: "10:00"
+      },
+      {
+        id: 2,
+        subjectName: "Computer Networks",
+        facultyName: "Dr. A. Verma",
+        classroom: "Room 204",
+        startTime: "10:15",
+        endTime: "11:15"
+      },
+      {
+        id: 3,
+        subjectName: "Operating Systems",
+        facultyName: "Prof. R. Deshmukh",
+        classroom: "Lab 1 (First Floor)",
+        startTime: "11:30",
+        endTime: "12:30"
+      },
+      {
+        id: 4,
+        subjectName: "Database Management Systems",
+        facultyName: "Dr. S. Kulkarni",
+        classroom: "Seminar Hall A",
+        startTime: "13:30",
+        endTime: "14:30"
+      },
+      {
+        id: 5,
+        subjectName: "Cloud Computing & DevOps",
+        facultyName: "Prof. M. Patil",
+        classroom: "Lab 4 (Second Floor)",
+        startTime: "14:45",
+        endTime: "15:45"
+      }
+    ];
+
+    // State Variables
+    let isSimulated = false;
+    let simCurrentMinutes = 9 * 60 + 10; // Start simulation at 09:10 (inside Class 1)
+    let notifiedUpcomingClasses = new Set();
+    let notificationTimeout = null;
+
+    // DOM Elements
+    const liveClockEl = document.getElementById("liveClock");
+    const currentSubjectEl = document.getElementById("currentSubject");
+    const currentDetailsEl = document.getElementById("currentDetails");
+    const nextSubjectEl = document.getElementById("nextSubject");
+    const nextDetailsEl = document.getElementById("nextDetails");
+    const countdownLabelEl = document.getElementById("countdownLabel");
+    const countdownDigitsEl = document.getElementById("countdownDigits");
+    const notificationBar = document.getElementById("notificationBar");
+    const scheduleTableBody = document.getElementById("scheduleTableBody");
+    const modeDescriptionEl = document.getElementById("modeDescription");
+    const simToggleBtn = document.getElementById("simToggleBtn");
+
+    // -------------------------------------------------------------
+    // 2. HELPER FUNCTIONS: Time Parsing & Formatting
+    // -------------------------------------------------------------
+    function timeStringToSeconds(hhmm) {
+      const [hours, minutes] = hhmm.split(":").map(Number);
+      return hours * 3600 + minutes * 60;
+    }
+
+    function formatSecondsToHMS(totalSeconds) {
+      const hrs = Math.floor(totalSeconds / 3600);
+      const mins = Math.floor((totalSeconds % 3600) / 60);
+      const secs = totalSeconds % 60;
+      return `${String(hrs).padStart(2, "0")}:${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+    }
+
+    // -------------------------------------------------------------
+    // 3. TEMPORARY NOTIFICATIONS (Requirement 3: setTimeout())
+    // -------------------------------------------------------------
+    function triggerNotification(message, durationMs = 4000) {
+      notificationBar.textContent = message;
+      notificationBar.classList.add("visible");
+
+      if (notificationTimeout) {
+        clearTimeout(notificationTimeout);
+      }
+
+      notificationTimeout = setTimeout(() => {
+        notificationBar.classList.remove("visible");
+      }, durationMs);
+    }
+
+    // -------------------------------------------------------------
+    // 4. REAL-TIME SCHEDULER & COUNTDOWN (Requirement 2: setInterval())
+    // -------------------------------------------------------------
+    function updateScheduler() {
+      const now = new Date();
+      let currentTotalSeconds;
+
+      if (!isSimulated) {
+        // Real-Time Mode: Use system clock
+        const currentHours = now.getHours();
+        const currentMinutes = now.getMinutes();
+        const currentSeconds = now.getSeconds();
+        currentTotalSeconds = currentHours * 3600 + currentMinutes * 60 + currentSeconds;
+        liveClockEl.textContent = now.toLocaleTimeString();
+      } else {
+        // Simulation Mode: Fast forward 1 simulated second every tick
+        simCurrentMinutes += 1 / 60;
+        currentTotalSeconds = Math.floor(simCurrentMinutes * 60);
+        const simHours = Math.floor(currentTotalSeconds / 3600) % 24;
+        const simMins = Math.floor((currentTotalSeconds % 3600) / 60);
+        const simSecs = currentTotalSeconds % 60;
+        liveClockEl.textContent = `${String(simHours).padStart(2, "0")}:${String(simMins).padStart(2, "0")}:${String(simSecs).padStart(2, "0")} (Sim)`;
+      }
+
+      let activeClass = null;
+      let nextClass = null;
+
+      // Identify Current Ongoing and Next Upcoming Class
+      for (let i = 0; i < classSchedule.length; i++) {
+        const item = classSchedule[i];
+        const startSec = timeStringToSeconds(item.startTime);
+        const endSec = timeStringToSeconds(item.endTime);
+
+        if (currentTotalSeconds >= startSec && currentTotalSeconds < endSec) {
+          activeClass = item;
+          nextClass = classSchedule[i + 1] || null;
+          break;
+        } else if (currentTotalSeconds < startSec) {
+          if (!nextClass) {
+            nextClass = item;
+          }
+        }
+      }
+
+      // Update Current Class Display
+      if (activeClass) {
+        currentSubjectEl.textContent = activeClass.subjectName;
+        currentDetailsEl.innerHTML = `Faculty: <strong>${activeClass.facultyName}</strong><br>Classroom: <strong>${activeClass.classroom}</strong><br>Timing: ${activeClass.startTime} – ${activeClass.endTime}`;
+      } else {
+        currentSubjectEl.textContent = "No Ongoing Class";
+        currentDetailsEl.innerHTML = "Faculty: --<br>Classroom: --<br>Timing: --";
+      }
+
+      // Update Next Class Display
+      if (nextClass) {
+        nextSubjectEl.textContent = nextClass.subjectName;
+        nextDetailsEl.innerHTML = `Faculty: <strong>${nextClass.facultyName}</strong><br>Classroom: <strong>${nextClass.classroom}</strong><br>Timing: ${nextClass.startTime} – ${nextClass.endTime}`;
+
+        // 5-minute pre-class notification check (Requirement 3.1)
+        const nextStartSec = timeStringToSeconds(nextClass.startTime);
+        const diffToNext = nextStartSec - currentTotalSeconds;
+
+        if (diffToNext > 0 && diffToNext <= 300 && !notifiedUpcomingClasses.has(nextClass.id)) {
+          triggerNotification(`Your class "${nextClass.subjectName}" will start in 5 minutes.`);
+          notifiedUpcomingClasses.add(nextClass.id);
+        }
+      } else {
+        nextSubjectEl.textContent = "Day Schedule Completed";
+        nextDetailsEl.innerHTML = "No more classes scheduled for today.";
+      }
+
+      // Format Countdown Text based on Active vs Upcoming Status (Requirement 2.2)
+      if (activeClass) {
+        const remainingSec = timeStringToSeconds(activeClass.endTime) - currentTotalSeconds;
+        countdownLabelEl.textContent = "Class in progress";
+        countdownDigitsEl.textContent = `- ${formatSecondsToHMS(Math.max(0, remainingSec))} remaining`;
+      } else if (nextClass) {
+        const timeUntilNext = timeStringToSeconds(nextClass.startTime) - currentTotalSeconds;
+        countdownLabelEl.textContent = "Next class starts in";
+        countdownDigitsEl.textContent = `- ${formatSecondsToHMS(Math.max(0, timeUntilNext))}`;
+      } else {
+        countdownLabelEl.textContent = "All Classes Completed";
+        countdownDigitsEl.textContent = "00:00:00";
+      }
+
+      renderScheduleTable(currentTotalSeconds);
+    }
+
+    // -------------------------------------------------------------
+    // 5. SCHEDULE TABLE RENDERING
+    // -------------------------------------------------------------
+    function renderScheduleTable(currentTotalSec) {
+      scheduleTableBody.innerHTML = "";
+
+      classSchedule.forEach((item, index) => {
+        const startSec = timeStringToSeconds(item.startTime);
+        const endSec = timeStringToSeconds(item.endTime);
+
+        let rowClass = "";
+        let statusBadge = "";
+
+        if (currentTotalSec >= startSec && currentTotalSec < endSec) {
+          rowClass = "active-row";
+          statusBadge = '<span class="status-pill pill-ongoing">In Progress</span>';
+        } else if (currentTotalSec < startSec) {
+          statusBadge = '<span class="status-pill pill-upcoming">Upcoming</span>';
+        } else {
+          statusBadge = '<span class="status-pill pill-completed">Completed</span>';
+        }
+
+        const tr = document.createElement("tr");
+        if (rowClass) tr.className = rowClass;
+
+        tr.innerHTML = `
+          <td>${index + 1}</td>
+          <td><strong>${item.subjectName}</strong></td>
+          <td>${item.facultyName}</td>
+          <td>${item.classroom}</td>
+          <td>${item.startTime}</td>
+          <td>${item.endTime}</td>
+          <td>${statusBadge}</td>
+        `;
+        scheduleTableBody.appendChild(tr);
+      });
+    }
+
+    // -------------------------------------------------------------
+    // 6. SIMULATION TOGGLE (Allows Testing Real vs. Demo Clock)
+    // -------------------------------------------------------------
+    function toggleSimulationMode() {
+      isSimulated = !isSimulated;
+      notifiedUpcomingClasses.clear();
+
+      if (isSimulated) {
+        simCurrentMinutes = 9 * 60 + 58; // 09:58 (2 minutes before Class 1 ends)
+        modeDescriptionEl.innerHTML = "<strong>Clock Mode:</strong> Demo Mode (Testing Transitions)";
+        simToggleBtn.textContent = "Switch to Real System Time";
+        triggerNotification("Demo mode active: Set clock to 09:58 AM to observe transitions.");
+      } else {
+        modeDescriptionEl.innerHTML = "<strong>Clock Mode:</strong> Real System Time";
+        simToggleBtn.textContent = "Fast Demo Mode (Simulated)";
+        triggerNotification("Switched back to live system time.");
+      }
+      updateScheduler();
+    }
+
+    // -------------------------------------------------------------
+    // 7. PERSISTENT THEME SWITCHER (localStorage)
+    // -------------------------------------------------------------
+    function applyTheme(theme) {
+      const toggleBtn = document.getElementById("themeToggle");
+      if (theme === "dark") {
+        document.body.classList.add("dark-theme");
+        toggleBtn.textContent = "☀️ Light Mode";
+      } else {
+        document.body.classList.remove("dark-theme");
+        toggleBtn.textContent = "🌙 Dark Mode";
+      }
+    }
+
+    function toggleTheme() {
+      const isDark = document.body.classList.contains("dark-theme");
+      const nextTheme = isDark ? "light" : "dark";
+      localStorage.setItem("scheduler_theme_pref", nextTheme);
+      applyTheme(nextTheme);
+    }
+
+    // -------------------------------------------------------------
+    // 8. INITIALIZATION
+    // -------------------------------------------------------------
+    window.addEventListener("DOMContentLoaded", () => {
+      const savedTheme = localStorage.getItem("scheduler_theme_pref") || "light";
+      applyTheme(savedTheme);
+
+      updateScheduler();
+      // Tick every 1 second via setInterval (Requirement 2.1)
+      setInterval(updateScheduler, 1000);
+    });
+  </script>
+</body>
+</html>
